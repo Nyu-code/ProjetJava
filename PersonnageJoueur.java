@@ -3,29 +3,49 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class PersonnageJoueur extends Personnage{
+	private String pseudo;
+	private boolean enCombat = false;
 	private static final String type="joueur";
-	private static int pointAction = 12;
-	private static final String [] actions 	= 	{"attaquer (3PA)"	,"se déplacer (2PA)","utiliser un objet(variable)"	,"ramasser/deposer (2PA)"	,"finir et garder les PA restants"};
-	private static final int [] coutAction 	= 	{	3				,	2				,	0							,		2					,	0};
-	private int adresse;
-	private int resistance;
-	private int force;
+	private int pointAction = 6;
+	private final String [] actions 	= 	{"attaquer (3PA)"	,"se déplacer (2PA)","utiliser un objet(variable)"	,"ramasser/deposer (2PA)"	,"finir et garder les PA restants"};
+	private final int [] coutAction 	= 	{	3				,	2				,	0							,	2						,	0	};
+	private final int [] faitAction 	=	{	1				,	2				,	3							,	4						,	5	};
+	
+	static final int ATTAQUER = 1;
+	static final int DEPLACER = 2;
+	static final int UTILISER = 3;
+	static final int RAMASSER = 4;
+	static final int DEPOSER = 5;
+	static final int FINIR = 6;
+	
+	private int adresse,resistance,force,degre;
+
 	
 	public PersonnageJoueur() {
 		super();
-		this.adresse = 0;
-		this.resistance = 0;
-		this.force = 0;
+		MenuCreation m = new MenuCreation();
+		while (!m.getConfirmation()) {
+			System.out.println("");
+		}
+		this.pseudo = m.pseudo;
+		this.adresse = m.adresse;
+		this.resistance = m.resistance;
+		this.force = m.force;
+		this.degre = m.degres;
 		
 	}
 
-	public PersonnageJoueur(int blessure, int exp, int init, int atk, int esquive, int defense, int degat,
-							int adresse, int resistance, int force)
+
+
+	public PersonnageJoueur(String pseudo, int force, int adresse, int resistance,
+				int exp, int init, int atk, int esquive, int defense, int degat,int degre)
 	{
-		super(blessure,exp,init,atk,esquive,defense,degat); //on appelle le constructeur de personnage avec les bons paramètres
+		super(exp,init,atk,esquive,defense,degat); //on appelle le constructeur de personnage avec les bons paramètres
+		this.pseudo = pseudo;
 		this.adresse = adresse;
 		this.resistance = resistance;
 		this.force = force;
+		this.degre = degre;
 		
 	}
 	
@@ -49,6 +69,40 @@ public class PersonnageJoueur extends Personnage{
 		return force;
 	}
 
+	public String getPseudo() {
+		return pseudo;
+	}
+	
+	public int getDegre() {
+		return degre;
+	}
+
+	public String[] getActions() {
+		return actions;
+	}
+
+
+
+	public boolean isEnCombat() {
+		return enCombat;
+	}
+
+
+
+	public void setEnCombat() {
+		this.enCombat = !this.enCombat;
+	}
+
+
+
+	public void setDegre(int degre) {
+		this.degre = degre;
+	}
+
+	public void setPseudo(String pseudo) {
+		this.pseudo = pseudo;
+	}
+
 	public void setAdresse(int adresse) {
 		this.adresse = adresse;
 	}
@@ -61,49 +115,63 @@ public class PersonnageJoueur extends Personnage{
 		this.force = force;
 	}
 
+	public void setPointAction(int pointAction) {
+		this.pointAction = pointAction;
+	}
+
 	public String affichePA() {
 		return "Vos points d'action : " + pointAction;
 	}
 	
 	public void changePA(int point) {
-		pointAction = pointAction + point;
+		this.pointAction += point;
 	}
 	
-	public String afficheAction() {
-		String s = new String("Vos choix possibles :\n");
-		int padispo = this.getPointAction();		//stock le nombre de pa disponible
-		ArrayList<String> possible = new ArrayList<>(); //liste d'action possible
+	public ArrayList<Integer> indActPossible(){
+		ArrayList<Integer> indice = new ArrayList<>();
+		int padispo = this.getPointAction();
 		
-		for (int i = 0;i<actions.length;i++) {		//boucle pour ajouter dans la liste "possible" les actions possibles en prenant compte du point d'action restant
-			if (padispo>=coutAction[i]) {			//regarde si l'action à l'indice i est possible.
-				possible.add(actions[i]);			//oui -> on l'ajoute dans la liste des actions possibles.
+		for (int i = 0;i<actions.length;i++) {			
+			if (padispo>=coutAction[i]) {				
+				indice.add(faitAction[i]);				
 			}
 		}
-		
-		for (int j = 0;j<possible.size();j++) {
-			s = s + (j+1) + " - " + possible.get(j) + "\n";
-			}
-		return s;
+		return indice;
 	}
 	
-	public int nbAction() {	//méthode permettant d'obtenir le nombre d'actions possible
-		int padispo = this.getPointAction();
+	public ArrayList<String> actionPossible(){
 		ArrayList<String> possible = new ArrayList<>();
-		
+		int padispo = this.getPointAction();
 		for (int i = 0;i<actions.length;i++) {			
 			if (padispo>=coutAction[i]) {				
 				possible.add(actions[i]);				
 			}
 		}
 		
+		return possible;
+	}
+	
+	public String afficheAction() {
+		String s = "";
+		ArrayList<String> actPossible = this.actionPossible();
+		
+		for (int j = 0;j<actPossible.size();j++) {
+			s = s + (j+1) + " - " + actPossible.get(j) + "\n";
+			}
+		return s;
+	}
+	
+	public int nbAction() {	//méthode permettant d'obtenir le nombre d'actions possible
+		ArrayList<String> possible = this.actionPossible();
 		return possible.size();
 	}
 	
 	public int getChoixJoueur() {
 		
-		String listeAction = this.afficheAction();
-		System.out.println(listeAction);			//Affiche les actions et on demande le choix
-		System.out.print("\nVotre choix : ");
+		System.out.println(this.afficheAction());	//Affiche les actions et on demande le choix /!\ à pê supprimer
+		System.out.print("\nVotre choix : ");		// /!\ à pê supprimer
+		
+		
 		
 		boolean choix = false;						//on initialise un choix "faux"
 		Scanner sc = new Scanner(System.in);		//crée le scanner pour "l'input"
@@ -115,10 +183,9 @@ public class PersonnageJoueur extends Personnage{
 			try{	
 				sc = new Scanner(System.in);
 				choixJoueur = sc.nextInt();
-				if (nb>=choixJoueur) {					//on vérifie que le choix choisit correspond bien à un chiffre des choix possibles.
+				if (nb >= choixJoueur && choixJoueur>0) {					//on vérifie que le choix choisit correspond bien à un chiffre des choix possibles.
 					choix = true;
-				}
-				else {
+				}	else 	{
 					System.out.println("Le choix ne correspond pas à la liste d'actions possible");
 					choix = false;
 				}
@@ -131,29 +198,125 @@ public class PersonnageJoueur extends Personnage{
 		return choixJoueur;
 	}
 	
-	public void deplacer() { //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		pointAction = pointAction - 2;
+
+	
+	public void faireAction() { //en developpement
+		int choix = getChoixJoueur();
+		ArrayList<Integer> indicePossible = this.indActPossible();
+		int action = faitAction[indicePossible.get(choix-1)];
+		
+//		switch (action) {
+//			case ATTAQUER:{
+//				this.attaquer();
+//				break;
+//			}
+//			case UTILISER:{
+//				int objet = choixObjet();
+//				utiliserObjet(inventaire.get(objet));
+//				break;
+//			}
+//			case DEPLACER:{
+//				break;
+//			}
+//			case RAMASSER:{
+//				objet = 
+//				this.ramasser(objet);
+//				break;
+//			}
+//			case DEPOSER:{
+//				int objet = choixObjet();
+//				this.deposer(objet);
+//				break;
+//			}
+//			case FINIR:{
+//				finir();
+//				break;
+//			}
+//		}
+		
+	}
+	
+	public int choixObjet() {
+		Scanner sc = new Scanner(System.in);
+		boolean choix = false;
+		int indice = 0;
+		while (!choix) {
+			try {
+					indice = sc.nextInt();
+					if (indice<inventaire.size()) {
+						choix = true;
+					}
+			}
+			catch (InputMismatchException e) {
+				System.out.println("Saisissez une case correct (entier)");
+			}
+		}
+		return indice;
 	}
 	
 	public void attaquer() { //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		pointAction = pointAction - 3;
+		this.changePA(-3);
+		System.out.println("Vous attaquez !");
 	}
 	
-	public void ramadepo() { //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		pointAction = pointAction - 2;
+	public void deplacer() {
+		this.changePA(-2); //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		System.out.println(("Vous vous déplacez"));
+	}
+	
+	public void ramasser(int indice) { //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		this.changePA(-2);
+		
+		super.removeIndInventaire(indice);
+		
+		System.out.println("Vous avez ramassé :" + inventaire.get(indice).toString());
+	}
+	
+	public void deposer(int indice) { //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		this.changePA(-2);
+		
+		super.removeIndInventaire(indice);
+		System.out.println("Vous avez deposé :" + inventaire.get(indice).toString());
+	}
+	
+	public void utiliserObjet(Item i) {
+		if (i instanceof Potion) {
+			this.potion((Potion)i);
+			System.out.println("Vous utilisez une potion !");
+		}
+	}
+	
+	public boolean finir() {
+		System.out.println("Votre tour est terminé");
+		return true;
+	}
+	
+//	public void choixPotion() { //en cours de dév
+//		ArrayList
+//	}
+	
+	public void potion(Potion p) {
+		System.out.println(this.getHp());
+		System.out.println(this.getHp()*p.degat);
+		if (p instanceof Mana) {
+			this.setPointAction(this.getPointAction()+p.pa);
+		} else {
+			super.setHp(this.getHp() + this.getMaxHp()*p.degat);
+			super.setBlessure();
+		}
 	}
 	
 	public String afficheBlessure() {
 		return "Votre niveau de blessure : " + super.getBlessure();
 	}
 	
-	public int[] tiragealea() { //Systeme de tirage aléatoire
+	public int[] tirageAlea() { //Systeme de tirage aléatoire
         int de_adresse = 0;
         int de_resistance = 0;
         int de_force = 0;
-        int[] resultats = {0,0,0};
         
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+        int[] resultat = new int[3];
+
         int affichetirage = 0;
         int tirageadresse = this.adresse; //Tant que tirageadresse est <= à 3 on peut ajouter un dé
         for (de_adresse = 0; tirageadresse >= 3 ; de_adresse++) {
@@ -161,9 +324,10 @@ public class PersonnageJoueur extends Personnage{
             affichetirage += dee();
         }
         affichetirage += tirageadresse; // On ajoute ce qu'il reste aux Dé pour avoir le résultat du tirage
-        resultats[0]=affichetirage;
+        
+        resultat[0] = affichetirage;
         System.out.println("Tirage aleatoire d'adresse :"+ de_adresse + "D" + (int) tirageadresse + " Resultat : " + affichetirage);
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+
         affichetirage = 0;
         int tirageresistance = this.resistance;
         for (de_resistance = 0; tirageresistance >= 3 ; de_resistance++) {
@@ -171,9 +335,10 @@ public class PersonnageJoueur extends Personnage{
             affichetirage += dee();
         }
         affichetirage += tirageresistance;
-        resultats[1]=affichetirage;
-        System.out.println("Tirage aleatoire d'adresse :"+ de_resistance + "D" + (int) tirageresistance + " Resultat : " + affichetirage);
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        resultat[1] = affichetirage;
+        System.out.println("Tirage aleatoire de resistance :"+ de_resistance + "D" + (int) tirageresistance + " Resultat : " + affichetirage);
+
         affichetirage = 0;
         int tirageforce = this.force;
         for (de_force = 0; tirageforce >= 3 ; de_force++) {
@@ -181,22 +346,30 @@ public class PersonnageJoueur extends Personnage{
             affichetirage += dee();
         }
         affichetirage += tirageforce;
-        resultats[2]=affichetirage;
-        System.out.println("Tirage aleatoire d'adresse :"+ de_force + "D" + (int) tirageforce + " Resultat : " + affichetirage);
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-        return resultats;
+        
+        resultat[2] = affichetirage;
+        System.out.println("Tirage aleatoire de force :"+ de_force + "D" + (int) tirageforce + " Resultat : " + affichetirage);
+        return resultat;
     }
-	
-	public static void main(String[] args) {
-		PersonnageJoueur p1 = new PersonnageJoueur(0,0,10,20,5,10,10,20,15,30);
-		//System.out.println(p1.affichePA());
-		//System.out.println(p1.afficheBlessure());
-		//p1.getChoixJoueur();
-        //p1.tiragealea();
-        p1.addInventaire("bouclier");
-        p1.afficheInventaire();
-        p1.removeInventaire("bouclier");
-        p1.afficheInventaire();
+	public String afficheStats() {
+		String s = "";
+		s += "Experience : " + super.getExp() + "\n";
+		
+		s += "Force : " + this.getForce() + "\n";
+		s += "Adresse : " + this.getAdresse() + "\n";
+		s += "Resistance : " + this.getResistance() + "\n";
+		
+		s += "Initiative : " + this.getInit() + "\n";
+		s += "Attaque : " + this.getAtk() + "\n";
+		s += "Esquive : " + this.getEsq() + "\n";
+		s += "Défense : " + this.getDef() + "\n";
+		s += "Dégâts : " + this.getDgt() + "\n";
+		
+		return s;
 	}
 	
+	public String toString() {
+		return "pseudo: " + this.getPseudo() +", type: " + this.getType() + ", forme: " + super.getBlessure() + ", PA: " + this.getPointAction();
+	}
+
 }
