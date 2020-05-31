@@ -12,6 +12,10 @@ public abstract class Personnage {
 	protected String blessure;
 	protected Item gauche,droite; //ce qu'il y a dans la main gauche et ce qu'il y a dans la main droite
 	protected int exp,init,atk,esq,def,dgt;
+	protected Item protection;
+	protected boolean gauche_libre = true;
+	protected boolean droite_libre = true;
+	protected boolean protection_libre = true;
 	
 	public Personnage() {
 		this.hp = maxHp;
@@ -253,7 +257,6 @@ public abstract class Personnage {
 		System.out.println("Potion"+"("+nb+")");
 		System.out.println(s);
 	}
-	
 	
 //	abstract void deplacer(); //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //	

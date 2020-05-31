@@ -1,4 +1,3 @@
-
 public class Explosive extends Potion {
 	
 	public static final String type = "explosive";

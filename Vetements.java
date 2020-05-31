@@ -1,10 +1,10 @@
 
 public class Vetements extends Equipement{
-	private String nom;
-	private int solidite;
-	private int poids; //poids = encombrement vetement
-	private int resistance;
-	private static final String categorie = "chester";
+	public String nom;
+	public int solidite;
+	public int poids; //poids = encombrement vetement
+	public int resistance;
+	public static final String categorie = "chester";
 	
 	public Vetements() {
 		this.nom = "";
@@ -18,14 +18,17 @@ public class Vetements extends Equipement{
 		this.poids = v.poids;
 		this.resistance = v.resistance;
 	}
-	public Vetements(String name, int sol, int poids, int res, String genre) {
+	public Vetements(String name, int sol, int poids, int res) {
 		this.nom = name;
 		this.solidite = sol;
 		this.poids = poids;
 		this.resistance = res;
 	}
-	public String ToString() {
-		return this.nom + "\n Solidité du vêtement :" + this.solidite 
+	public String toString() {
+		return this.nom;
+	}
+	public String statVetements() {
+		return  "Solidité du vêtement :" + this.solidite 
 				+ "\n poids du vêtement :" + this.poids + "\n Résistance du vêtement : " + this.resistance;
 	}
 }

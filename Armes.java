@@ -1,9 +1,9 @@
 
 public class Armes extends Equipement{
-	private String nom;
-	private int armimpact;
-	private int maniabilite;
-	private static final String categorie="weapon"; //classer les armes vêtements etc
+	public String nom;
+	public int armimpact;
+	public int maniabilite;
+	public static final String categorie="weapon"; //classer les armes vêtements etc
 
 	public Armes() {
 		this.nom = "";
@@ -15,14 +15,17 @@ public class Armes extends Equipement{
 		this.armimpact = a.armimpact;
 		this.maniabilite = a.maniabilite;
 	}
-	public Armes(String name,int armimpact, int maniabilite, String genre) {
+	public Armes(String name,int armimpact, int maniabilite) {
 		this.nom = name;
 		this.armimpact = armimpact;
 		this.maniabilite = maniabilite;
 	}
 
-	public String ToString() {
-		return this.nom+"\n Impact Arme : "+armimpact +"\n Maniabilité arme : "+
+	public String toString() {
+		return this.nom;
+	}
+	public String statArme() {
+		return "Impact Arme : "+ this.armimpact +"\n Maniabilité arme : "+
 				this.maniabilite ;
 	}
 	

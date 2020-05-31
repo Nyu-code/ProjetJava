@@ -367,6 +367,151 @@ public class PersonnageJoueur extends Personnage{
 		
 		return s;
 	}
+	public void equiper(Item i) {
+		if (i instanceof Bouclier) {
+			Scanner scan = new Scanner(System.in);
+			System.out.println("Vous souhaitez l'équiper en tant qu'arme(1) ou en tant que defense(2) ?");
+			boolean verif = false;
+			int choix = 0;
+			while (!verif) {
+				try {
+					choix = scan.nextInt();
+					if (choix > 0 && choix < 3) {
+						verif = true;
+					}
+					else
+						System.out.println("Entrez 1 pour arme ou 2 pour defense");
+				}
+				catch(InputMismatchException e){
+					System.out.println("Veuillez entrer un entier");
+				}
+			}
+			if(choix == 1) {
+				if(!this.droite_libre) {
+					
+					this.addInventaire((Armes) droite);
+					this.removeInventaire((Bouclier) i);
+					this.droite = i;
+					System.out.println(droite.toString() + "a été remplacé par "+ i.toString());
+					
+				}
+				else {
+					i = new Armes("Bouclier", Bouclier.ARMIMPACT, Bouclier.MANIABILITE);
+					this.droite = i;
+					this.removeInventaire((Bouclier) i);
+					this.droite_libre = false;
+				}
+			}
+			else {
+				if(!this.gauche_libre) {
+					
+					this.addInventaire((Bouclier) gauche);
+					this.removeInventaire((Bouclier) i);
+					this.gauche = i;
+					System.out.println(gauche.toString() + "a été remplacé par "+ i.toString());
+					
+				}
+				else {
+					i = new Vetements("Bouclier", Bouclier.SOLIDITE, Bouclier.POIDS, Bouclier.RESISTANCE);
+					this.gauche = i;
+					this.removeInventaire((Bouclier) i);
+					this.gauche_libre = false;
+				}
+			}
+		}
+		else if (i instanceof Armes){
+			if(!this.droite_libre) {
+				
+				this.addInventaire((Armes) droite);
+				this.removeInventaire((Armes) i);
+				this.droite = i;
+				System.out.println(droite.toString() + "a été remplacé par "+ i.toString());
+				
+			}
+			else {
+				this.droite = i;
+				this.removeInventaire(i);
+				this.droite_libre = false;
+			}
+		}
+		else if (i instanceof Vetements){
+			if (!this.protection_libre) {
+				
+				this.addInventaire((Vetements) protection);
+				this.removeInventaire((Vetements) i);
+
+			}
+			else {
+				this.protection = i;
+				this.removeInventaire(i);
+				this.protection_libre = false;
+			}
+		}
+	}
+	
+	public void desequiper(Item i) {
+		if (i instanceof Bouclier) {
+			Scanner scan = new Scanner(System.in);
+			System.out.println("Vous souhaitez déséquiper l'arme(1) ou la défense(2) ?");
+			boolean verif = false;
+			int choix = 0;
+			while (!verif) {
+				try {
+					choix = scan.nextInt();
+					if (choix > 0 && choix < 3) {
+						verif = true;
+					}
+					else
+						System.out.println("Entrez 1 pour arme ou 2 pour defense");
+				}
+				catch(InputMismatchException e){
+					System.out.println("Veuillez entrer un entier");
+				}
+			}
+			if(choix == 1) {
+				if(this.droite_libre) {
+					System.out.println("La main droite est vide");
+				}
+				else {
+					i = new Bouclier();
+					Item vide = new Main();
+					this.droite = vide;
+					this.addInventaire((Bouclier) i);
+					this.droite_libre = true;
+				}
+			}
+			else {
+				if(this.gauche_libre)
+					System.out.println("La main gauche est vide");
+				else {
+					i = new Bouclier();
+					this.gauche = null;
+					this.addInventaire((Bouclier) i);
+					this.gauche_libre = true;
+				}
+			}
+		}
+		else if (i instanceof Armes){
+			if(this.droite_libre) {
+				System.out.println("Main droite vide");
+			}
+			else {
+				this.droite = null;
+				this.addInventaire(i);
+				this.droite_libre = true;
+			}
+		}
+		else if (i instanceof Vetements){
+			if (this.protection_libre) {
+				System.out.println("Vous n'êtes pas protégé");
+			}
+			else {
+				this.protection = null;
+				this.addInventaire(i);
+				this.protection_libre = true;
+			}
+		}
+	}
 	
 	public String toString() {
 		return "pseudo: " + this.getPseudo() +", type: " + this.getType() + ", forme: " + super.getBlessure() + ", PA: " + this.getPointAction();

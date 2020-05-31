@@ -1,4 +1,3 @@
-
 public class Soin extends Potion {
 	
 	public static final String type = "soin";

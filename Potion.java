@@ -1,4 +1,3 @@
-
 public class Potion extends Item {
 	public static final String categorieP 		= "potion";
 	public String type;	//type dans le tableau tabPotion

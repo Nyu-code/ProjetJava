@@ -1,3 +1,4 @@
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -61,7 +62,7 @@ public class Menu extends JFrame {
 		btnNouvelle.setFont(new Font("Arial", Font.PLAIN, 25));
 		btnNouvelle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose();				// dispose pour quitter la fenÃªtre
+				dispose();				// dispose pour quitter la fenêtre
 				}
 			}
 		);
@@ -71,7 +72,7 @@ public class Menu extends JFrame {
 		btnCharger.setFont(new Font("Arial", Font.PLAIN, 25));
 		btnCharger.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose();				// dispose pour quitter la fenÃªtre
+				dispose();				// dispose pour quitter la fenêtre
 				}
 			}
 		);
@@ -82,7 +83,7 @@ public class Menu extends JFrame {
 		btnQuitter.addActionListener(
 		new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose();				// dispose pour quitter la fenÃªtre
+				dispose();				// dispose pour quitter la fenêtre
 				}
 			}
 		);
