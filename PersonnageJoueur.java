@@ -474,7 +474,7 @@ public class PersonnageJoueur extends Personnage{
 				}
 				else {
 					i = new Bouclier();
-					Item vide = new Main();
+					Item vide = new Poing();
 					this.droite = vide;
 					this.addInventaire((Bouclier) i);
 					this.droite_libre = true;
@@ -496,7 +496,8 @@ public class PersonnageJoueur extends Personnage{
 				System.out.println("Main droite vide");
 			}
 			else {
-				this.droite = null;
+				Item vide = new Poing();
+				this.droite = vide;
 				this.addInventaire(i);
 				this.droite_libre = true;
 			}
