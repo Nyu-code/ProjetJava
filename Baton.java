@@ -1,9 +1,9 @@
 
 public class Baton extends Armes{
-	static final String nom = "Bâton";
-	static final int armimpact = 10;
-	static final int maniabilite = 10;
+	static final String NOM = "Bâton";
+	static final int ARMIMPACT = 10;
+	static final int MANIABILITE = 10;
 	public Baton() {
-		super(nom, armimpact, maniabilite);
+		super(NOM, ARMIMPACT, MANIABILITE);
 	}
 }

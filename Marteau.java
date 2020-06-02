@@ -1,9 +1,9 @@
 
 public class Marteau extends Armes{
-	static final String nom = "Marteau";
-	static final int armimpact = 10;
-	static final int maniabilite = 10;
+	static final String NOM = "Marteau";
+	static final int ARMIMPACT = 10;
+	static final int MANIABILITE = 10;
 	public Marteau() {
-		super(nom, armimpact, maniabilite);
+		super(NOM, ARMIMPACT, MANIABILITE);
 	}
 }

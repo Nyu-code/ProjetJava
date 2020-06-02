@@ -1,9 +1,9 @@
 
 public class Lance extends Armes{
-	static final String nom = "Lance";
-	static final int armimpact = 10;
-	static final int maniabilite = 10;
+	static final String NOM = "Lance";
+	static final int ARMIMPACT = 10;
+	static final int MANIABILITE = 10;
 	public Lance() {
-		super(nom, armimpact, maniabilite);
+		super(NOM, ARMIMPACT, MANIABILITE);
 	}
 }

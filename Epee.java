@@ -1,9 +1,9 @@
 
 public class Epee extends Armes{
-	static final String nom = "Epée";
-	static final int armimpact = 10;
-	static final int maniabilite = 10;
+	static final String NOM = "Epée";
+	static final int ARMIMPACT = 10;
+	static final int MANIABILITE = 10;
 	public Epee() {
-		super(nom, armimpact, maniabilite);
+		super(NOM, ARMIMPACT, MANIABILITE);
 	}
 }

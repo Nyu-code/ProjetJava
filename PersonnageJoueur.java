@@ -513,7 +513,7 @@ public class PersonnageJoueur extends Personnage{
 			}
 		}
 	}
-	
+
 	public String toString() {
 		return "pseudo: " + this.getPseudo() +", type: " + this.getType() + ", forme: " + super.getBlessure() + ", PA: " + this.getPointAction();
 	}
