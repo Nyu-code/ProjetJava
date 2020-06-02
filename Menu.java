@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -8,8 +7,9 @@ import javax.swing.*;
 public class Menu extends JFrame {
 	PersonnageJoueur personnage;
 	JButton btnQuitter, btnSauvegarde, btnCharger,btnNouvelle;
-	JButton[] btnInventaire = new JButton[personnage.inventaire.size()];
+	JButton[] btnInventaire = new JButton[16];
 	JButton[] btnAction;
+	Object[] options = {"Nouvelle partie", "Charger une partie", "Quitter"};
 	
 	static final int ZONE_INVENTAIRE = 1;
 	static final int ZONE_ACTIONS = 2;
@@ -42,56 +42,42 @@ public class Menu extends JFrame {
 	private void initChoix() {
 		JPanel menu = new JPanel();
 		this.add(menu);
-		menu.setLayout(new GridBagLayout()); //setLayout pour utiliser BorderLayout
-		menu.add(buildMenuChoix(), new GridBagConstraints());
+		
+		int input = JOptionPane.showOptionDialog(null,"Votre choix","Choix de la personne",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,null,options,options[2]);
+		if (input == 0) {
+			System.out.println("CrÃ©ation d'une nouvelle partie");
+			menu.add(buildPanelJeu());
+		}
+		
+		else if(input == 1) {
+			System.out.println("Chargement d'une nouvelle partie");
+		}
+		
+		else if (input == 2) {
+			System.out.println("Vous quittez le jeu");
+			
+		}
+
+	}
+	public JPanel buildPanelJeu(PersonnageJoueur p) {
+		JPanel jeu = new JPanel();
+		return jeu;
 	}
 	
-	private void initMenu() {
+	public JPanel buildPanelJeu() {
 		
-		JPanel menu = new JPanel();
-		this.add(menu);
+		JPanel jeu = new JPanel();
+		MenuCreation creation = new MenuCreation();
+		int[] stat = creation.getStats();
+		while (!creation.getConfirmation()) {
+			System.out.println("");
+		}
+		personnage = new PersonnageJoueur(creation.getPseudo(),stat[0],stat[1],stat[2],0,0,0,0,0,0,creation.degres);
+		return jeu;
 				
 	}
 	
-	public JPanel buildMenuChoix() {
-		JPanel choix = new JPanel();
-		
-		choix.setLayout(new GridLayout(3,1,20,100));
-		btnNouvelle = new JButton("Nouvelle partie");
-		btnNouvelle.setPreferredSize(new Dimension(300,100));
-		btnNouvelle.setFont(new Font("Arial", Font.PLAIN, 25));
-		btnNouvelle.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();				// dispose pour quitter la fenêtre
-				}
-			}
-		);
-		choix.add(btnNouvelle);
-		
-		btnCharger = new JButton("Charger partie");
-		btnCharger.setFont(new Font("Arial", Font.PLAIN, 25));
-		btnCharger.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();				// dispose pour quitter la fenêtre
-				}
-			}
-		);
-		choix.add(btnCharger);
-		
-		btnQuitter = new JButton("Quitter");
-		btnQuitter.setFont(new Font("Arial", Font.PLAIN, 25));
-		btnQuitter.addActionListener(
-		new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();				// dispose pour quitter la fenêtre
-				}
-			}
-		);
-		choix.add(btnQuitter);
-		
-		return choix;
-		
-	}
+
 	
 	public JPanel buildInventaire(PersonnageJoueur p) {
 		JPanel pan = new JPanel();
@@ -112,13 +98,14 @@ public class Menu extends JFrame {
 	
 	public JPanel buildActions(PersonnageJoueur p) {
 		JPanel pan = new JPanel();
+		pan.setLayout(new GridLayout(2,4));
 		
 		if (p.isEnCombat()==true) {
 			btnAction = new JButton[p.nbAction()];
 			ArrayList<String>actionPossible = p.actionPossible();
 			ArrayList<Integer>indAction = p.indActPossible();
 			for (int i = 0; i < actionPossible.size();i++){
-				btnAction[i] = new JButton(p.getActions()[indAction.get(i)]);
+				btnAction[i] = new JButton((i+1) + " - " + p.getActions()[indAction.get(i)]);
 				pan.add(btnAction[i]);
 			}
 		} else {

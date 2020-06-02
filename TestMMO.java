@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class TestMMO {
 
 	public static void main(String[] args) {
@@ -25,9 +27,9 @@ public class TestMMO {
 //	    p1.affichePotion();
 //		Potion pot = new Soin();
 //		System.out.println(pot);
-		
-		
-		PersonnageJoueur p3 = new PersonnageJoueur("Test Potion Soin",2,6,9,10,163,479,4,2,3,5); //stats random inutile pour le test suivant
+//		
+//		
+//		PersonnageJoueur p3 = new PersonnageJoueur("Test Potion Soin",2,6,9,10,163,479,4,2,3,5); //stats random inutile pour le test suivant
 //		p3.setHp(40);
 //		System.out.println(p3);
 //		System.out.println(p3.getHp());
@@ -36,7 +38,7 @@ public class TestMMO {
 //		p3.potion((Soin)p3.inventaire.get(0));
 //		System.out.println(p3);
 //		System.out.println(p3.getHp());
-			
+//			
 //		
 //		PersonnageJoueur p4 = new PersonnageJoueur("Test de blessure",3,2,6,9,10,163,479,4,2,5); //stats random inutile pour le test suivant
 //		System.out.println(p4);
@@ -56,19 +58,20 @@ public class TestMMO {
 //		int[] stat2 = m2.getStats();
 //		String pseudo2 = m2.getPseudo();
 //		
-//		PersonnageJoueur p2 = new PersonnageJoueur(pseudo2,stat2[0],stat2[1],stat2[2],5,3,1,23,5,30,m.degres);
+//		PersonnageJoueur p2 = new PersonnageJoueur(pseudo2,stat2[0],stat2[1],stat2[2],5,3,1,23,5,30,m2.degres);
 //		System.out.println(p2);
 //		
 //		String stats = p2.afficheStats();
 //		System.out.println(stats);
 //		
 //		new Statistique(p2);
+//		
+//		new Menu(p2);
 		
 		
-		Item bâton = new Baton();
-		
-		p3.addInventaire(bâton);
-		p3.afficheInventaire();
-		
+//		System.out.println(new Map(new PersonnageJoueur(),50,30,16,7));
+		for (Item m:Item.LISTE_ITEM) {
+			System.out.println(m);
 		}
+	}
 }

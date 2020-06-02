@@ -228,7 +228,6 @@ public class MenuCreation extends JFrame{
 		        			} else {
 		        				input = JOptionPane.showConfirmDialog(null,"Êtes-vous sûr de créer "+pseudo+"?","Confirmation",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		        			}
-		        			System.out.println(input);
 		        			if (input==0) 
 		        			{
 		        				confirme = true;
