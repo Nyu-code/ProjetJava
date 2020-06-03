@@ -1,13 +1,19 @@
 
-public class Main extends Armes{
-	static final String nom = "Main";
-	static final int armimpact = 10;
-	static final int maniabilite = 10;
-	public Main() {
-		super(nom, armimpact, maniabilite);
-	}
+public class Main {
 
-	public String toString() {
-		return this.nom;
-	}
-}
+   public static void main(String[] args) {
+    
+      String host = "127.0.0.1";
+      int port = 1906;
+      
+      Serveur ts = new Serveur(host, port);
+      ts.open();
+      
+      System.out.println("Serveur lancé");
+      
+      Thread t = new Thread(new Client(host, port));
+      t.start();
+     
+     
+      }
+   }
