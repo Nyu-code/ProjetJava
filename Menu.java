@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.text.*;
 import java.util.*;
 
 import javax.swing.*;
@@ -84,6 +86,32 @@ public class Menu extends JFrame {
 		return jeu;
 				
 	}
+	
+	public void Sauvegarder() {
+        //Demande de confirmation de sauvegarde pour éviter toute abusation et tout fail
+        int choix = JOptionPane.showConfirmDialog(this, "Êtes-vous sûr de vouloir sauvegarder ?", 
+                "Demande de confirmation pour sauvegarder", JOptionPane.YES_NO_OPTION, JOptionPane.WARNINGMESSAGE);
+        if (choix == 1) {
+            return;
+        }
+        //On crée la date à laquelle il sauvegarde le fichier et on l'implente
+        //dans le nom du fichier pour pouvoir se repérer lors des chargements de partie
+        DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        System.out.println(format.format(date));
+
+        //On sauvegarde le personnage et la map en les serialisant
+
+        try (FileOutputStream fos = new FileOutputStream(personnage.getPseudo()+""+format.format(date)+".ser");
+                ObjectOutputStream oos = new ObjectOutputStream(fos)){
+            oos.writeObject(personnage);
+
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 	
 
 	
