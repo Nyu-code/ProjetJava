@@ -1,26 +1,13 @@
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.*;
 
 public class Menu extends JFrame {
 	PersonnageJoueur personnage;
 	JButton btnQuitter, btnSauvegarde, btnCharger,btnNouvelle;
+	JLabel lblProtec,lblGauche,lblDroite;
 	JButton[] btnInventaire = new JButton[16];
 	JButton[] btnAction;
 	Object[] options = {"Nouvelle partie", "Charger une partie", "Quitter"};
@@ -40,7 +27,8 @@ public class Menu extends JFrame {
 	public Menu(PersonnageJoueur p) {
 		super("EHLPTMMMORPGSVR");
 		this.setTitle("EHLPTMMMORPGSVR");
-		this.initChoix();
+//		this.initChoix();
+		this.initComp(p);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.centrer(0.9);
 		this.setVisible(true);
@@ -59,7 +47,7 @@ public class Menu extends JFrame {
 		
 		int input = JOptionPane.showOptionDialog(null,"Votre choix","Choix de la personne",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,null,options,options[2]);
 		if (input == 0) {
-			System.out.println("Création d'une nouvelle partie");
+			System.out.println("CrÃ©ation d'une nouvelle partie");
 			menu.add(buildPanelJeu());
 		}
 		
@@ -72,6 +60,12 @@ public class Menu extends JFrame {
 			
 		}
 
+	}
+	
+	private void initComp(PersonnageJoueur p) {
+		JPanel menu = new JPanel();
+		this.add(menu);
+		menu.add(buildInventaire(p));
 	}
 	public JPanel buildPanelJeu(PersonnageJoueur p) {
 		JPanel jeu = new JPanel();
@@ -86,7 +80,7 @@ public class Menu extends JFrame {
 		while (!creation.getConfirmation()) {
 			System.out.println("");
 		}
-		personnage = new PersonnageJoueur(creation.getPseudo(),stat[0],stat[1],stat[2],0,0,0,0,0,0,creation.degres);
+		personnage = new PersonnageJoueur(creation.getPseudo(),stat[0],stat[1],stat[2],0,creation.degres);
 		return jeu;
 				
 	}
@@ -95,10 +89,27 @@ public class Menu extends JFrame {
 	
 	public JPanel buildInventaire(PersonnageJoueur p) {
 		JPanel pan = new JPanel();
-		for (int i = 0; i < 16 ; i++) {
+		JPanel panEquipement = new JPanel();
+		lblGauche = new JLabel("Gauche : " + p.gauche.toString());
+		lblDroite = new JLabel("Droite : " + p.droite.toString());
+		lblProtec = new JLabel("Protection : " + p.protection.toString());
+		
+		panEquipement.add(lblGauche);
+		panEquipement.add(new JLabel(" | "));
+		panEquipement.add(lblDroite);
+		panEquipement.add(new JLabel(" | "));
+		panEquipement.add(lblProtec);
+		
+		JPanel panInventaire = new JPanel();
+		
+		for (int i = 0; i < p.getInventaire().size() ; i++) {
 			btnInventaire[i] = new JButton(p.getInventaire().get(i).toString());
-			pan.add(btnInventaire[i]);
+			panInventaire.add(btnInventaire[i]);
 		}
+		
+		pan.setLayout(new GridBagLayout());
+		pan.add(panEquipement);
+		pan.add(panInventaire);
 		return pan;
 	}
 	
@@ -131,31 +142,6 @@ public class Menu extends JFrame {
 		}
 		
 		return pan;
-	}
-	public void Sauvegarder() {
-		//Demande de confirmation de sauvegarde pour éviter toute abusation et tout fail
-		int choix = JOptionPane.showConfirmDialog(this, "Êtes-vous sûr de vouloir sauvegarder ?", 
-				"Demande de confirmation pour sauvegarder", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-		if (choix == 1) {
-			return;
-		}
-		//On crée la date à laquelle il sauvegarde le fichier et on l'implente
-		//dans le nom du fichier pour pouvoir se repérer lors des chargements de partie
-		DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Date date = new Date();
-		System.out.println(format.format(date));
-		
-		//On sauvegarde le personnage et la map en les serialisant
-		
-		try (FileOutputStream fos = new FileOutputStream(personnage.getPseudo()+"_"+format.format(date)+".ser");
-				ObjectOutputStream oos = new ObjectOutputStream(fos)){
-			oos.writeObject(personnage);
-			
-		}catch(FileNotFoundException e){
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	class Listener implements ActionListener {
