@@ -17,6 +17,7 @@ public abstract class Personnage {
 	protected boolean droite_libre = true;
 	protected boolean protection_libre = true;
 	protected boolean enCombat = false;
+	protected boolean ton_tour = false;
 	
 	public Personnage() {
 		this.hp = maxHp;
@@ -285,17 +286,6 @@ public abstract class Personnage {
 		}
 		System.out.println("Potion"+"("+nb+")");
 		System.out.println(s);
-	}
-	
-	public void combat(Personnage p1, Personnage p2) {
-		if (p1.isEnCombat() == false) {
-			p1.setEnCombat();
-		}
-		
-		if (p2.isEnCombat() == false) {
-			p1.setEnCombat();
-		}
-		
 	}
 	
 	
