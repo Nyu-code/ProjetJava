@@ -4,6 +4,11 @@ public class Item {
 	public String categorie;			//potion ou arme ou protection
 	public int[] bouclier_arme={10,10};
 	public int[] bouclier_defense= {10,10,10};
+	public int solidite;
+	public int poids; //poids = encombrement vetement
+	public int resistance;
+	public int armimpact;
+	public int maniabilite;
 	//liste d'item qui existe pour le personnage non joueur
 	public static ArrayList<Item> LISTE_ITEM = new ArrayList<Item>(Arrays.asList(
 				new Soin(), new Explosive(), new Molotov(), new Mana(), new Poison(),
