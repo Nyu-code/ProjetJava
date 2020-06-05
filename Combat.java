@@ -10,11 +10,12 @@ public class Combat extends JFrame{
 	PersonnageNonJoueur pnj;
 	Map map;
 	String [] Boutons = {"Nouvelle Partie", "Charger une partie", "Quitter le jeu"};
-	public Combat(Personnage p1, PersonnageNonJoueur pnj) {
+	public Combat(PersonnageJoueur p1, PersonnageNonJoueur pnj) {
 		//Tant que le joueur est en combat la boucle tourne
-		while (p.enCombat) {
+		while (p1.enCombat) {
 		if (p1.getInit() > pnj.getInit()) { //Si l'initiative du joueur > init du pnj alrs p1 joue avant pnj
-			
+			p1.affichePA();
+			p1.faireAction();
 			if (verifMort(p1)) {
 				p1.setEnCombat();
 			}
@@ -27,14 +28,14 @@ public class Combat extends JFrame{
 	}
 }
 	public boolean verifMort(Personnage p1) {
-		if (p1.blessure == "inconscient") { //le combat s'arrête si le joueur est mort
+		if (p1.getBlessure() == "inconscient") { //le combat s'arrête si le joueur est mort
 			   ImageIcon icon = new ImageIcon("mort.png");
 			int choix = JOptionPane.showOptionDialog(this, "Vous êtes mort au combat",
 					   "état d'urgence", JOptionPane.DEFAULT_OPTION,
 					   JOptionPane.WARNING_MESSAGE, icon , Boutons ,Boutons[0]);
 			p1.setEnCombat();
 			if (choix == 0) {
-				// redemarre le jeu avec une nouvelle demande
+				// redemarre le jeu avec une nouvelle partie
 			}
 			else if (choix == 1) {
 				JFileChooser select = new JFileChooser(""); // à déterminer l'endroit où sera les parties sauvegarder
