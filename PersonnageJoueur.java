@@ -1,10 +1,12 @@
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class PersonnageJoueur extends Personnage{
+
+public class PersonnageJoueur extends Personnage implements Serializable{
 	private String pseudo;
+	private boolean enCombat = false;
 	private static final String type="joueur";
 	private int pointAction = 6;
 	private final String [] actions 	= 	{"attaquer (3PA)"	,"se déplacer (2PA)","utiliser un objet(variable)"	,"ramasser/deposer (2PA)"	,"finir et garder les PA restants"};
@@ -19,8 +21,7 @@ public class PersonnageJoueur extends Personnage{
 	static final int FINIR = 6;
 	
 	private int adresse,resistance,force,degre;
-	
-	int init,atk,esq,def,dgt;
+
 	
 	public PersonnageJoueur() {
 		super();
@@ -34,47 +35,18 @@ public class PersonnageJoueur extends Personnage{
 		this.force = m.force;
 		this.degre = m.degres;
 		
-		//on s'occupe de ses objets équipés
-		this.protection = new TShirt();
-		this.droite = new Poing();
-		this.gauche = new Poing();
-		
-		this.init = this.adresse - this.protection.poids;
-		this.atk = this.adresse + this.droite.maniabilite + this.gauche.maniabilite;
-		this.esq = this.adresse - this.protection.poids;
-		this.def = this.resistance + this.protection.solidite;
-		this.dgt = this.force + this.droite.armimpact + this.gauche.armimpact;
-		
-		
-		
-		//ajoute des objets de base pour se battre
-		this.baseInventaire();
 	}
 
 
 
 	public PersonnageJoueur(String pseudo, int force, int adresse, int resistance,
-							int exp, int degre)
-	{	
-		
-		super(exp); //on appelle le constructeur de personnage avec les bons paramètres
-		
+				int exp, int init, int atk, int esquive, int defense, int degat,int degre)
+	{
+		super(exp,init,atk,esquive,defense,degat); //on appelle le constructeur de personnage avec les bons paramètres
 		this.pseudo = pseudo;
-		
 		this.adresse = adresse;
 		this.resistance = resistance;
 		this.force = force;
-		
-		this.protection = new TShirt();
-		this.droite = new Poing();
-		this.gauche = new Poing();
-		
-		this.init = this.adresse - this.protection.poids;
-		this.atk = this.adresse + this.droite.maniabilite + this.gauche.maniabilite;
-		this.esq = this.adresse - this.protection.poids;
-		this.def = this.resistance + this.protection.solidite;
-		this.dgt = this.force + this.droite.armimpact + this.gauche.armimpact;
-		
 		this.degre = degre;
 		
 	}
@@ -157,14 +129,6 @@ public class PersonnageJoueur extends Personnage{
 		this.pointAction += point;
 	}
 	
-	public void baseInventaire() {
-		this.addInventaire(new Soin());
-		this.addInventaire(new Soin());
-		this.addInventaire(new Soin());
-		this.addInventaire(new Mana());
-		this.addInventaire(new Baton());
-	}
-	
 	public ArrayList<Integer> indActPossible(){
 		ArrayList<Integer> indice = new ArrayList<>();
 		int padispo = this.getPointAction();
@@ -219,6 +183,7 @@ public class PersonnageJoueur extends Personnage{
 		
 		while (!choix) {								//boucle qui pour vérifier qu'on input bien un choix correcte
 			try{	
+				sc = new Scanner(System.in);
 				choixJoueur = sc.nextInt();
 				if (nb >= choixJoueur && choixJoueur>0) {					//on vérifie que le choix choisit correspond bien à un chiffre des choix possibles.
 					choix = true;
@@ -288,52 +253,16 @@ public class PersonnageJoueur extends Personnage{
 				System.out.println("Saisissez une case correct (entier)");
 			}
 		}
-		sc.close();
 		return indice;
 	}
 	
-	public void attaquer(Personnage p1, Personnage p2) { //un PJ n'attaqu'un PNJ
+	public void attaquer() { //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		this.changePA(-3);
 		System.out.println("Vous attaquez !");
 	}
 	
-	public void deplacer(Map m) {
-		
-		
-		if (this.getPointAction()<2) {
-			return;
-		}
-		
-		
-		ArrayList<String> deplacement = new ArrayList<>(Arrays.asList("haut","bas","gauche","droite"));
-		//on sauvegarde les données des monstres ainsi que leur positions
-		ArrayList<PersonnageNonJoueur> listeMonstre = m.getListePNJ();
-		ArrayList<Integer> posVMonstre = m.getPosvPNJ();
-		ArrayList<Integer> posHMonstre = m.getPoshPNJ();
-		
-		Scanner sc = new Scanner(System.in);
-		boolean choix = false;
-		while (!choix) {
-			try {
-				String choixDeplacement = sc.next();
-				if (deplacement.contains(choixDeplacement)) {
-					choix = true;
-				}
-			} catch (InputMismatchException e) {
-				System.out.println("Nous n'avons pas reconnu votre choix, saisissez un déplacement correct (haut,bas,gauche,droite)");
-			}
-		}
-		
-		
-		
-		
-		
-		if (this.enCombat == true) {
-			this.changePA(-2);
-		}
-		
-		
-		
+	public void deplacer() {
+		this.changePA(-2); //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		System.out.println(("Vous vous déplacez"));
 	}
 	
@@ -367,7 +296,6 @@ public class PersonnageJoueur extends Personnage{
 //	public void choixPotion() { //en cours de dév
 //		ArrayList
 //	}
-	
 	
 	public void potion(Potion p) {
 		System.out.println(this.getHp());
@@ -441,7 +369,6 @@ public class PersonnageJoueur extends Personnage{
 		
 		return s;
 	}
-	
 	public void equiper(Item i) {
 		if (i instanceof Bouclier) {
 			Scanner scan = new Scanner(System.in);
@@ -461,15 +388,14 @@ public class PersonnageJoueur extends Personnage{
 					System.out.println("Veuillez entrer un entier");
 				}
 			}
-			scan.close();
 			if(choix == 1) {
 				if(!this.droite_libre) {
-
+					
 					this.addInventaire((Armes) droite);
 					this.removeInventaire((Bouclier) i);
 					this.droite = i;
 					System.out.println(droite.toString() + "a été remplacé par "+ i.toString());
-
+					
 				}
 				else {
 					i = new Armes("Bouclier", Bouclier.ARMIMPACT, Bouclier.MANIABILITE);
@@ -480,12 +406,12 @@ public class PersonnageJoueur extends Personnage{
 			}
 			else {
 				if(!this.gauche_libre) {
-
+					
 					this.addInventaire((Bouclier) gauche);
 					this.removeInventaire((Bouclier) i);
 					this.gauche = i;
 					System.out.println(gauche.toString() + "a été remplacé par "+ i.toString());
-
+					
 				}
 				else {
 					i = new Vetements("Bouclier", Bouclier.SOLIDITE, Bouclier.POIDS, Bouclier.RESISTANCE);
@@ -497,12 +423,12 @@ public class PersonnageJoueur extends Personnage{
 		}
 		else if (i instanceof Armes){
 			if(!this.droite_libre) {
-
+				
 				this.addInventaire((Armes) droite);
 				this.removeInventaire((Armes) i);
 				this.droite = i;
 				System.out.println(droite.toString() + "a été remplacé par "+ i.toString());
-
+				
 			}
 			else {
 				this.droite = i;
@@ -512,7 +438,7 @@ public class PersonnageJoueur extends Personnage{
 		}
 		else if (i instanceof Vetements){
 			if (!this.protection_libre) {
-
+				
 				this.addInventaire((Vetements) protection);
 				this.removeInventaire((Vetements) i);
 
@@ -523,9 +449,8 @@ public class PersonnageJoueur extends Personnage{
 				this.protection_libre = false;
 			}
 		}
-		
 	}
-
+	
 	public void desequiper(Item i) {
 		if (i instanceof Bouclier) {
 			Scanner scan = new Scanner(System.in);
@@ -545,7 +470,6 @@ public class PersonnageJoueur extends Personnage{
 					System.out.println("Veuillez entrer un entier");
 				}
 			}
-			scan.close();
 			if(choix == 1) {
 				if(this.droite_libre) {
 					System.out.println("La main droite est vide");
@@ -574,7 +498,8 @@ public class PersonnageJoueur extends Personnage{
 				System.out.println("Main droite vide");
 			}
 			else {
-				this.droite = null;
+				Item vide = new Poing();
+				this.droite = vide;
 				this.addInventaire(i);
 				this.droite_libre = true;
 			}
@@ -590,7 +515,7 @@ public class PersonnageJoueur extends Personnage{
 			}
 		}
 	}
-	
+
 	public String toString() {
 		return "pseudo: " + this.getPseudo() +", type: " + this.getType() + ", forme: " + super.getBlessure() + ", PA: " + this.getPointAction();
 	}

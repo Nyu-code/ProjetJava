@@ -1,16 +1,11 @@
 
 
 import java.io.BufferedInputStream;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Random;
-import java.net.URL;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -47,14 +42,24 @@ public class Client extends JFrame implements Runnable{
             String commande = getCommand();
             System.out.println(commande);
             writer.write(commande);
-            //flush() permet d'être sûr que le message est envoyé
+            // flush() permet d'être sûr que le message est envoyé
             writer.flush();
-//            
+//           
+            if (commande == "0") {
+            	commande = "Nouvelle partie";
+            }
+            else if (commande == "1") {
+            	commande = "Charger une partie";
+            }
+            else {
+            	commande = "Quitter le jeu";
+            }
+            //On informe au client que la commande à bien été envoyé
             System.out.println("Commande " + commande + " envoyée au serveur");
 //            
             //On attend la réponse
-            String response = read();
-            System.out.println("\t * " + name + " : Réponse reçue " + response);
+            String réponse = read();
+            System.out.println("\t * " + name + " : Réponse reçue");
 //            
            
          } catch (IOException e1) {
@@ -74,7 +79,7 @@ public class Client extends JFrame implements Runnable{
    private String getCommand(){
 	   ImageIcon icon = new ImageIcon("icon64.png");
 	   String Boutons[]= {"Nouvelle partie","Charger une partie","Quitter le jeu"};
-	   int choix = JOptionPane.showOptionDialog(this,"Bienvenue sur EHLPTMMMORPGSVR",
+	   int choix = JOptionPane.showOptionDialog(this,"Bienvenue sur EHLPTMMMORPGSVR codé par Jacques WU et Tom XIE",
 			   "EHLPTMMMORPGSVR", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, icon , Boutons ,Boutons[0]);
 	   String réponse = "";
 	   if (choix == 0) {
@@ -88,6 +93,7 @@ public class Client extends JFrame implements Runnable{
 	   }
 	   else  {
 		   System.out.println("Pas de réponse de la part de l'utilisateur");
+		   
 	   }
       return réponse;
    }

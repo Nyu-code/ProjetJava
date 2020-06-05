@@ -1,22 +1,22 @@
 
 
 import java.io.BufferedInputStream;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.text.DateFormat;
-import java.util.Date;
+import java.io.FileOutputStream;
 
 public class ClientProcessor implements Runnable{
 
-   private Socket sock;
+   private Socket socket;
    private PrintWriter writer = null;
    private BufferedInputStream reader = null;
    
-   public ClientProcessor(Socket pSock){
-      sock = pSock;
+   public ClientProcessor(Socket Sock){
+      socket = Sock;
    }
    
    //Le traitement lancé dans un thread séparé
@@ -24,44 +24,49 @@ public class ClientProcessor implements Runnable{
       System.err.println("Lancement du traitement de la connexion cliente");
 
       boolean closeConnexion = false;
+      
       //tant que la connexion est active, on traite les demandes
-      while(!sock.isClosed()){
+      // isClosed() permet de retourner un boolean qui nous dit si le socket est fermé ou pas.
+      while(!socket.isClosed()){
          
          try {
-            
-            //Ici, nous n'utilisons pas les mêmes objets que précédemment
-            //Je vous expliquerai pourquoi ensuite
-            writer = new PrintWriter(sock.getOutputStream());
-            reader = new BufferedInputStream(sock.getInputStream());
+        	 
+            writer = new PrintWriter(socket.getOutputStream());
+            reader = new BufferedInputStream(socket.getInputStream());
             
             //On attend la demande du client
             String réponse = read();
-            InetSocketAddress remote = (InetSocketAddress)sock.getRemoteSocketAddress();
+            //Permet de récupérer la fin d'un endpoint du socket client
+            InetSocketAddress remote = (InetSocketAddress)socket.getRemoteSocketAddress();
             
             //On affiche quelques infos, pour le débuggage
             String debug = "";
             debug = "Thread : " + Thread.currentThread().getName() + "\n ";
             debug += "Demande de l'adresse : " + remote.getAddress().getHostAddress() +"\n";
             debug += " Sur le port : " + remote.getPort() + ".\n";
-            System.err.println("\n" + debug);
+            System.out.println("\n"+debug);
             
             //On traite la demande du client en fonction de la commande reçu
             String toSend = "";
             
             switch(réponse){
+            
                case "0":
                   Map m = new Map();
                   System.out.println(m);
                   break;
+                  
                case "1":
                   toSend = "";
                   break;
+                  
                case "2":
-                  toSend = "Le jeu se ferme"; 
+                  toSend = "Le jeu se ferme";
                   closeConnexion = true;
                   break;
+                  
                default : 
-                  toSend = "Commande inconnu !";                     
+                  toSend = "Commande inconnu !";
                   break;
             }
             
@@ -70,10 +75,10 @@ public class ClientProcessor implements Runnable{
             writer.flush();
             
             if(closeConnexion){
-               System.err.println("Le jeu se ferme ! ");
+            	System.out.println("Le jeu se ferme !");
                writer = null;
                reader = null;
-               sock.close();
+               socket.close();
                break;
             }
          }catch(SocketException e){
@@ -81,7 +86,7 @@ public class ClientProcessor implements Runnable{
             break;
          } catch (IOException e) {
             e.printStackTrace();
-         }         
+         }
       }
    }
    
