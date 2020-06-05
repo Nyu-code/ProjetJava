@@ -79,7 +79,7 @@ public class Client extends JFrame implements Runnable{
    private String getCommand(){
 	   ImageIcon icon = new ImageIcon("icon64.png");
 	   String Boutons[]= {"Nouvelle partie","Charger une partie","Quitter le jeu"};
-	   int choix = JOptionPane.showOptionDialog(this,"Bienvenue sur EHLPTMMMORPGSVR codé par Jacques WU et Tom XIE",
+	   int choix = JOptionPane.showOptionDialog(this,"Bienvenue sur EHLPTMMMORPGSVR",
 			   "EHLPTMMMORPGSVR", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, icon , Boutons ,Boutons[0]);
 	   String réponse = "";
 	   if (choix == 0) {
@@ -93,6 +93,14 @@ public class Client extends JFrame implements Runnable{
 	   }
 	   else  {
 		   System.out.println("Pas de réponse de la part de l'utilisateur");
+		   writer.write("CLOSE");
+		   writer.close();
+		   //Si l'utilisateur ne compte pas envoyé de réponse ou quoi que ce soit on ferme la connexion
+		   try {
+			connexion.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		   
 	   }
       return réponse;

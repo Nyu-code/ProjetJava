@@ -287,6 +287,30 @@ public abstract class Personnage {
 		System.out.println("Potion"+"("+nb+")");
 		System.out.println(s);
 	}
+
+	public int getPosH() {
+		return posH;
+	}
+
+	public void setPosH(int posH) {
+		this.posH = posH;
+	}
+
+	public int getPosV() {
+		return posV;
+	}
+
+	public void setPosV(int posV) {
+		this.posV = posV;
+	}
+
+	public boolean isTon_tour() {
+		return ton_tour;
+	}
+
+	public void setTon_tour(boolean ton_tour) {
+		this.ton_tour = ton_tour;
+	}
 	
 	
 //	

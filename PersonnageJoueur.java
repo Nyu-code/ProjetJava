@@ -292,9 +292,11 @@ public class PersonnageJoueur extends Personnage{
 		return indice;
 	}
 	
-	public void attaquer(Personnage p1, Personnage p2) { //un PJ n'attaqu'un PNJ
+	public void attaquer(PersonnageNonJoueur pnj) { //un PJ n'attaqu'un PNJ
 		this.changePA(-3);
 		System.out.println("Vous attaquez !");
+		pnj.setHp(pnj.getHp()-this.atk);
+		
 	}
 	
 	public void deplacer(Map m) {

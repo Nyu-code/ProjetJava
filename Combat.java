@@ -10,23 +10,33 @@ public class Combat extends JFrame{
 	PersonnageNonJoueur pnj;
 	Map map;
 	String [] Boutons = {"Nouvelle Partie", "Charger une partie", "Quitter le jeu"};
+	
 	public Combat(PersonnageJoueur p1, PersonnageNonJoueur pnj) {
 		//Tant que le joueur est en combat la boucle tourne
+		verifTour(p1, pnj);
 		while (p1.enCombat) {
-		if (p1.getInit() > pnj.getInit()) { //Si l'initiative du joueur > init du pnj alrs p1 joue avant pnj
+		if (p1.isTon_tour()) {
 			p1.affichePA();
 			p1.faireAction();
 			if (verifMort(p1)) {
 				p1.setEnCombat();
 			}
+			p1.setTon_tour(false);
 		}
-		
 		else {
-			
-			p1.setEnCombat();
+			pnj.attaque_joueur(p1);
+			p1.setTon_tour(true);
 		}
 	}
 }
+	public void verifTour(PersonnageJoueur p1, PersonnageNonJoueur pnj) {
+		if (p1.getInit() > pnj.getInit()) { //Si l'initiative du joueur > init du pnj alrs p1 joue avant pnj
+			p1.setTon_tour(true);
+		}
+		else {
+			pnj.setTon_tour(true);
+		}
+	}
 	public boolean verifMort(Personnage p1) {
 		if (p1.getBlessure() == "inconscient") { //le combat s'arrête si le joueur est mort
 			   ImageIcon icon = new ImageIcon("mort.png");
