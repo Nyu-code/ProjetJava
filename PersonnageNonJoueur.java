@@ -6,19 +6,19 @@ public class PersonnageNonJoueur extends Personnage{
 	private static int resistance = 50;
 	private static int force = 60;
 	private Item objet;
-	
+
 	public PersonnageNonJoueur() {
 		super();
 		super.setBlessure();
-		
+
 		//on donne a un monster un objet aléatoire
 		int alea = Personnage.rand(0, Item.LISTE_ITEM.size()-1);
-		
+
 		//on lui attribue l'item trouvé aléatoirement
 		this.objet = Item.LISTE_ITEM.get(alea);
 	}
-	
-	
+
+
 	public static String getType() {
 		return type;
 	}
@@ -35,7 +35,7 @@ public class PersonnageNonJoueur extends Personnage{
 	public Item getObjet() {
 		return this.objet;
 	}
-	
+
 	public static void setAdresse(int adresse) {
 		PersonnageNonJoueur.adresse = adresse;
 	}
@@ -45,7 +45,7 @@ public class PersonnageNonJoueur extends Personnage{
 	public static void setForce(int force) {
 		PersonnageNonJoueur.force = force;
 	}
-	
+
 	public String toString() {
 		return "type :" + PersonnageNonJoueur.getType() + ", forme :" + super.getBlessure() + ", objet :" + this.getObjet();
 	}

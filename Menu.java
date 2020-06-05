@@ -5,7 +5,6 @@ import java.text.*;
 import java.util.*;
 
 import javax.swing.*;
-
 public class Menu extends JFrame {
 	PersonnageJoueur personnage;
 	JButton btnQuitter, btnSauvegarde, btnCharger,btnNouvelle;
@@ -25,7 +24,6 @@ public class Menu extends JFrame {
 	static final int CODE_RAMASSER=4;
 	static final int CODE_DEPOSER=5;
 	static final int CODE_FINIR=6;
-
 	public Menu(PersonnageJoueur p) {
 		super("EHLPTMMMORPGSVR");
 		this.setTitle("EHLPTMMMORPGSVR");
@@ -49,7 +47,7 @@ public class Menu extends JFrame {
 		
 		int input = JOptionPane.showOptionDialog(null,"Votre choix","Choix de la personne",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,null,options,options[2]);
 		if (input == 0) {
-			System.out.println("CrÃ©ation d'une nouvelle partie");
+			System.out.println("Création d'une nouvelle partie");
 			menu.add(buildPanelJeu());
 		}
 		
@@ -61,7 +59,6 @@ public class Menu extends JFrame {
 			System.out.println("Vous quittez le jeu");
 			
 		}
-
 	}
 	
 	private void initComp(PersonnageJoueur p) {
@@ -84,18 +81,18 @@ public class Menu extends JFrame {
 		}
 		personnage = new PersonnageJoueur(creation.getPseudo(),stat[0],stat[1],stat[2],0,creation.degres);
 		return jeu;
-				
+
 	}
-	
+
 	public void Sauvegarder() {
-        //Demande de confirmation de sauvegarde pour Ã©viter toute abusation et tout fail
-        int choix = JOptionPane.showConfirmDialog(this, "ÃŠtes-vous sÃ»r de vouloir sauvegarder ?", 
-                "Demande de confirmation pour sauvegarder", JOptionPane.YES_NO_OPTION, JOptionPane.WARNINGMESSAGE);
+        //Demande de confirmation de sauvegarde pour éviter toute abusation et tout fail
+        int choix = JOptionPane.showConfirmDialog(this, "Êtes-vous sûr de vouloir sauvegarder ?", 
+                "Demande de confirmation pour sauvegarder", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (choix == 1) {
             return;
         }
-        //On crÃ©e la date Ã  laquelle il sauvegarde le fichier et on l'implente
-        //dans le nom du fichier pour pouvoir se repÃ©rer lors des chargements de partie
+        //On crée la date à laquelle il sauvegarde le fichier et on l'implente
+        //dans le nom du fichier pour pouvoir se repérer lors des chargements de partie
         DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         System.out.println(format.format(date));
@@ -112,9 +109,9 @@ public class Menu extends JFrame {
             e.printStackTrace();
         }
     }
-	
 
-	
+
+
 	public JPanel buildInventaire(PersonnageJoueur p) {
 		JPanel pan = new JPanel();
 		JPanel panEquipement = new JPanel();
@@ -175,7 +172,6 @@ public class Menu extends JFrame {
 	class Listener implements ActionListener {
 		private int zone;
         private int code;
-
         public Listener(int z, int c) {
         	this.zone=z;
         	this.code=c;

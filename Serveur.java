@@ -16,7 +16,7 @@ public class Serveur {
    
    public Serveur(){
       try {
-         server = new ServerSocket(port,100, InetAddress.getByName(host));
+         server = new ServerSocket(port, 100 , InetAddress.getByName(host));
          
       } catch (UnknownHostException e) {
          e.printStackTrace();
@@ -52,7 +52,10 @@ public class Serveur {
                   Socket client = server.accept();
                   
                   //Une fois reçue, on la traite dans un thread séparé
-                  System.out.println("Connexion cliente reçue.");                  
+                  System.out.println("Connexion cliente reçue.");
+                  
+                  //On lance le run() de ClientProcessor en mettant le client en paramètre
+                  //Client Processor agit comme un centre de serveur qui lui traitera les demande du client
                   Thread t = new Thread(new ClientProcessor(client));
                   t.start();
                   

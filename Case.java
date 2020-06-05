@@ -1,4 +1,5 @@
 
+
 public class Case {
 	public Object uneCase;
 	public boolean occupee;

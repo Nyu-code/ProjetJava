@@ -1,4 +1,3 @@
-
 public class Combat {
 	PersonnageJoueur p;
 	PersonnageNonJoueur pnj;

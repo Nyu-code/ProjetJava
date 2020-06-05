@@ -1,4 +1,3 @@
-
 public class Mana extends Potion {
 	public static final String TYPE = "Mana";
 	public static final int duree = 1;
