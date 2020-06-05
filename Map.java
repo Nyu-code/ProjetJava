@@ -32,9 +32,9 @@ public class Map {
 				
 				else if (count == alea) {
 					this.map[i][j] = new Case("p");
-					this.listePersonnage.add(new PersonnageJoueur());
-					this.poshPJ.add(i);
-					this.posvPJ.add(j);
+					PersonnageJoueur p = new PersonnageJoueur();
+					this.addPJ(p, i, j);
+					this.map[i][j] = new Case(p);
 				}
 				
 				else if (i == this.map.length/2 && j == this.map[0].length/2) {
@@ -69,13 +69,16 @@ public class Map {
 				for (int j = 0; j<map[0].length;j++) {
 					if (i == 0 || i == map.length-1) {
 						map[i][j] = new Case("#");
+						
 					} else if (j == 0 || j == map[0].length-1) {
 						map[i][j] = new Case("#");
+						
 					} else if (count == alea) {
 						this.map[i][j] = new Case("p");
-						this.listePersonnage.add(new PersonnageJoueur());
-						this.poshPJ.add(i);
-						this.posvPJ.add(j);
+						PersonnageJoueur p = new PersonnageJoueur();
+						this.addPJ(p, i, j);
+						this.map[i][j] = new Case(p);
+						
 					} else if (i == this.map.length/2 && j == this.map[0].length/2) 
 						{ if (!this.map[i][j].getOccupee())
 							{
@@ -89,6 +92,7 @@ public class Map {
 		}
 		
 	}
+	
 	
 	public Map(PersonnageJoueur p, int dimx, int dimy, int poshPJ, int posvPJ) {
 		
@@ -117,17 +121,15 @@ public class Map {
 					} else if (j == 0 || j == map[0].length-1) 											//condition de la bordure sud
 					{
 						map[i][j] = new Case("#");
-//					} else if (i == poshPJ && j == posvPJ) 												//condition pour placer un PJ
-//					{
+					} else if (i == poshPJ && j == posvPJ) 												//condition pour placer un PJ
+					{
 //						if (j == 0 && j == map[0].length-1) {											//on vérifie que la position du PJ ne soit pas sur une bordure
 //							System.out.println("Impossible de placer le personnage" + p.getPseudo());
 //						} else {																		
 //							map[i][j] = new Case(p);
 //							
 //							//ajout d'un personnagejoueur dans la liste des personnages
-							this.listePersonnage.add(p);
-							this.poshPNJ.add(i);
-							this.posvPNJ.add(j);
+							this.addPJ(p, i, j);
 //						}
 					} else 																				//placage du vide et/ou d'un monstre
 						{
@@ -144,9 +146,7 @@ public class Map {
 //							System.out.println(pnjListe.get(pnjAPlacer) + " est placé à : " + i + ", " + j);
 //							
 							//ajout d'un monstre dans la liste des monstres
-							this.listePNJ.add(pnjListe.get(pnjAPlacer));
-							this.poshPNJ.add(i);
-							this.posvPNJ.add(j);
+							this.addPNJ(pnjListe.get(pnjAPlacer), i, j);
 							
 							pnjAPlacer--;
 							maxMob++;
@@ -182,30 +182,28 @@ public class Map {
 					if (i == 0 || i == this.map.length-1)													//condition de la bordure nord
 					{
 						this.map[i][j] = new Case("#");
+						
 					} else if (j == 0 || j == this.map[0].length-1) 											//condition de la bordure sud
 					{
 						this.map[i][j] = new Case("#");
+						
 					} else if (i == posHNPC.get(compteurNPC) && j == posVNPC.get(compteurNPC) && compteurNPC < (listeNPC.size()-1))
 					{
-//						this.map[i][j] = new Case(listeNPC.get(compteurNPC));
-						
+						this.map[i][j] = new Case(listeNPC.get(compteurNPC));
 						
 						//apres avoir redéposer le monstre à sa propre case, il faut mettre à jour sa position (s'il n'a pas bougé)
-						this.listePNJ.set(compteurNPC, listeNPC.get(compteurNPC));
-						this.poshPNJ.set(compteurNPC, posHNPC.get(compteurNPC));
-						this.posvPNJ.set(compteurNPC, posVNPC.get(compteurNPC));
+						this.remplacePNJ(listeNPC.get(compteurNPC), posHNPC.get(compteurNPC), posVNPC.get(compteurNPC), compteurNPC);
+						compteurNPC++;
 						
 					} else if (i == p.posH && j == p.posV) 												//condition pour placer un PJ
 					{
 						if (j == 0 && j == this.map[0].length-1) {											//on vérifie que la position du PJ ne soit pas sur une bordure
 							System.out.println("Impossible de placer le personnage" + p.getPseudo());
-						} else {																		
-//							this.map[i][j] = new Case(p);
 							
+						} else {																		
+							this.map[i][j] = new Case(p);
 							//ajout d'un personnagejoueur dans la liste des personnages
-							this.listePersonnage.add(p);
-							this.poshPNJ.add(i);
-							this.posvPNJ.add(j);
+							this.addPJ(p, i, j);
 						}
 					} else
 						{
@@ -247,8 +245,8 @@ public class Map {
 		return itemAuSol;
 	}
 
-	public Case[][] getMap() {
-		return map;
+	public Map getMap() {
+		return this;
 	}
 	
 	public int getIndPersonnage(PersonnageJoueur p) {
@@ -348,14 +346,66 @@ public class Map {
 	 
 	public int getIndPJ(PersonnageJoueur p) {
 		
-		int compteur = 0;
-		for (PersonnageJoueur pj:this.listePersonnage) {
-			if (pj == p) {
-				return compteur;
+		if (this.estSurLaMap(p)) {
+			int compteur = 0;
+			for (PersonnageJoueur pj:this.listePersonnage) {
+				if (pj == p) {
+					return compteur;
+				}
+				compteur++;
 			}
-			compteur++;
 		}
 		return -1;
+
+	}
+	
+	public void addPJ(PersonnageJoueur p, int posh, int posv) {
+		this.listePersonnage.add(p);
+		this.poshPJ.add(posh);
+		this.posvPJ.add(posv);
+	}
+	
+	public void addPNJ(PersonnageNonJoueur p, int posh, int posv) {
+		this.listePNJ.add(p);
+		this.poshPJ.add(posh);
+		this.poshPNJ.add(posv);
+	}
+	
+	public void remplacePJ(PersonnageJoueur p, int posh, int posv, int indice) {
+		this.listePersonnage.set(indice, p);
+		this.poshPJ.set(indice, posh);
+		this.posvPJ.set(indice, posv);
+	}
+	
+	public void remplacePNJ(PersonnageNonJoueur p, int posh, int posv, int indice) {
+		this.listePNJ.set(indice, p);
+		this.poshPNJ.set(indice, posh);
+		this.posvPNJ.set(indice, posv);
+	}
+	
+	public boolean estSurLaMap(PersonnageJoueur p) {
+		for (PersonnageJoueur pj:this.listePersonnage) {
+			if (pj == p) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean estAutour(PersonnageJoueur p, Case c) {
+		
+		if (this.estSurLaMap(p)) {
+			ArrayList<Case> autour = this.autour(p);
+			
+			for (Case cases:autour) {
+				if (c==cases){
+					return true;
+				}
+			}
+		}
+		
+		return false;
+		
 	}
 	
 	public ArrayList<Case> autour(PersonnageJoueur p){
@@ -377,6 +427,54 @@ public class Map {
 		}
 		
 		return autourPJ;
+	}
+	
+	public void deplacer(PersonnageJoueur p) {
+		
+		if (this.estSurLaMap(p)) {
+			if (p.getPointAction()<2) {
+				return;
+			}
+			
+			ArrayList<String> deplacement = new ArrayList<>(Arrays.asList("Z","Q","S","D"));
+			//on sauvegarde les données des monstres ainsi que leur positions
+			
+			ArrayList<Case> autourP = this.autour(p);
+			System.out.println("Où voulez-vous déplacer ? ZQSD ou WASD");
+			String choixDeplacement = "";
+			
+			
+			Scanner sc = new Scanner(System.in);
+			
+			
+			
+			boolean choix = false;
+			while (!choix) {
+				try {
+					choixDeplacement = sc.next();
+					if (deplacement.contains(choixDeplacement)) {
+						choix = true;
+					}
+				} catch (InputMismatchException e) {
+					System.out.println("Nous n'avons pas reconnu votre choix, saisissez un déplacement correct (Z, Q, S, D ou W, A, S, D)");
+				}
+			}
+			sc.close();
+			
+			if ((choixDeplacement == "Z" || choixDeplacement == "W") && autourP.get(1).getOccupee() == false){
+				
+			}
+			
+			
+		} else {
+			System.out.println("Le personnage n'existe pas " + p.getPseudo());
+		}
+		
+
+	}
+	
+	public void deplacer(PersonnageNonJoueur npc) {
+		
 	}
 
 	public String toString() {

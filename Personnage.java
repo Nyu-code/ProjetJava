@@ -11,11 +11,12 @@ public abstract class Personnage {
 	protected static final int TAILLE_ARRAYLIST = 16;
 	protected String blessure;
 	protected Item gauche,droite; //ce qu'il y a dans la main gauche et ce qu'il y a dans la main droite
-	protected int exp,init,atk,esq,def,dgt;
+	protected int exp,init,atk,esq,def,dgt,posH,posV;
 	protected Item protection;
 	protected boolean gauche_libre = true;
 	protected boolean droite_libre = true;
 	protected boolean protection_libre = true;
+	protected boolean enCombat = false;
 	
 	public Personnage() {
 		this.hp = maxHp;
@@ -31,19 +32,18 @@ public abstract class Personnage {
 		this.dgt = 0;
 	}
 	
-	public Personnage(int exp, int init, int atk, int esquive, int defense, int degat) {
-		super();
+	public Personnage(int exp) {
 		this.hp = maxHp;
 		this.setBlessure();
 		for (int i = 0; i<this.inventaire.size();i++) {
 			this.inventaire.set(i,null);
 		}
 		this.exp = exp;
-		this.init = init;
-		this.atk = atk;
-		this.esq = esquive;
-		this.def = defense;
-		this.dgt = degat;
+		this.init = 0;
+		this.atk = 0;
+		this.esq = 0;
+		this.def = 0;
+		this.dgt = 0;
 	}
 
 
@@ -85,6 +85,14 @@ public abstract class Personnage {
 
 	public double getMaxHp() {
 		return maxHp;
+	}
+
+	public boolean isEnCombat() {
+		return enCombat;
+	}
+
+	public void setEnCombat() {
+		this.enCombat = !this.enCombat;
 	}
 
 	public void setHp(double hp) {
@@ -170,7 +178,7 @@ public abstract class Personnage {
 		this.setExp(this.exp+qty);
 	}
 	
-	public int rand(int min, int max) { //méthode pour créer l'aléatoire
+	public static int rand(int min, int max) { //méthode pour créer l'aléatoire
 		int n = min + (int)(Math.random() * ((max - min) + 1));
 		return n;
 	}
@@ -178,28 +186,49 @@ public abstract class Personnage {
 	public int dee() {	//méthode pour un dée de 6 faces
 		return rand(1,6);
 	}
+	
+	public boolean aPlusEsq(Personnage p1, Personnage p2) {
+		return (p1.getEsq()>p2.getEsq());
+	}
+	
+	public boolean aPluAtk(Personnage p1, Personnage p2) {
+		return (p1.getAtk()>p2.getAtk());
+	}
+	
+	public boolean aPlusDef(Personnage p1, Personnage p2) {
+		return (p1.getDef()>p2.getDef());
+	}
+	
+	public boolean aPluInit(Personnage p1, Personnage p2) {
+		return (p1.getInit()>p2.getInit());
+	}
+	
+	public boolean aPluDgt(Personnage p1, Personnage p2) {
+		return (p1.getDgt()>p2.getDgt());
+	}
 
 	
 	public boolean estDansInventaire(Item p) {
-		for (	int i = 0	; i<(inventaire.size())	;	i++) {
-			if (p.contentEquals(inventaire.get(i))) {
+		for (	int i = 0	; i<(this.inventaire.size())	;	i++) {
+			if (p.contentEquals(this.inventaire.get(i))) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
+	
 	public void afficheInventaire() {
-		System.out.println("Inventaire "+"("+inventaire.size()+")"+": ");
+		System.out.println("Inventaire "+"("+this.inventaire.size()+")"+": ");
 		String s = "";
-		if (inventaire.size()==0) {
+		if (this.inventaire.size()==0) {
 			s = "vide";
 		}
 		else {
-			for (int i = 0; i<inventaire.size()-1 &&inventaire.get(i)!=null ; i++ ) {
-	            s += i+1 + ". " + inventaire.get(i).toString()+", ";
+			for (int i = 0; i<this.inventaire.size()-1 &&this.inventaire.get(i)!=null ; i++ ) {
+	            s += i+1 + ". " + this.inventaire.get(i).toString()+", ";
 	        }
-			s += inventaire.size() + ". " + inventaire.get(inventaire.size()-1).toString()+".";
+			s += this.inventaire.size() + ". " + this.inventaire.get(this.inventaire.size()-1).toString()+".";
 		}
         System.out.println(s);
         System.out.println("");
@@ -207,26 +236,26 @@ public abstract class Personnage {
 
     public void addInventaire(Item objet) {
     	
-    	if (inventaire.size()==16) {
+    	if (this.inventaire.size()==16) {
     		System.out.println("Inventaire plein");
     	}
     	
     	else {
     		int i = 0;
-            while(i<(inventaire.size()) && !inventaire.get(i).equals(null)) {
+            while(i<(this.inventaire.size()) && !this.inventaire.get(i).equals(null)) {
               i++;
             }
-            inventaire.add(objet);
+            this.inventaire.add(objet);
     	}
     }
     public void removeIndInventaire(int indice) {
-    	inventaire.remove(indice);
+    	this.inventaire.remove(indice);
     }
 	
 	public void removeInventaire(Item item) {
-        for(int i = 0; i<inventaire.size();i++) {
-            if(inventaire.get(i)==item) {
-                inventaire.remove(i);
+        for(int i = 0; i<this.inventaire.size();i++) {
+            if(this.inventaire.get(i)==item) {
+            	this.inventaire.remove(i);
                 break;
             }
         }
@@ -234,8 +263,8 @@ public abstract class Personnage {
 	
 	public int getNbPot() { //méthode pour compter le nombre de potion dans l'inventaire
 		int compteur = 0;
-		for (int i  = 0; i< inventaire.size();i++) {
-			if (inventaire.get(i) instanceof Potion) {
+		for (int i  = 0; i< this.inventaire.size();i++) {
+			if (this.inventaire.get(i) instanceof Potion) {
 				compteur++;
 			}
 		}
@@ -245,20 +274,31 @@ public abstract class Personnage {
 	public void affichePotion() {
 		String s = "";
 		int nb = this.getNbPot();
-		for (int i = 0; i < inventaire.size()-1;i++) {
-			if (inventaire.get(i) instanceof Potion) {
-				s += (i+1) +" "+ inventaire.get(i).toString() + ",";
+		for (int i = 0; i < this.inventaire.size()-1;i++) {
+			if (this.inventaire.get(i) instanceof Potion) {
+				s += (i+1) +" "+ this.inventaire.get(i).toString() + ",";
 			}
 		}
 		
-		if (inventaire.get(inventaire.size()-1) instanceof Potion) {
-			s += inventaire.get(inventaire.size()-1).toString() + ".";
+		if (this.inventaire.get(this.inventaire.size()-1) instanceof Potion) {
+			s += this.inventaire.get(this.inventaire.size()-1).toString() + ".";
 		}
 		System.out.println("Potion"+"("+nb+")");
 		System.out.println(s);
 	}
 	
-//	abstract void deplacer(); //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	public void combat(Personnage p1, Personnage p2) {
+		if (p1.isEnCombat() == false) {
+			p1.setEnCombat();
+		}
+		
+		if (p2.isEnCombat() == false) {
+			p1.setEnCombat();
+		}
+		
+	}
+	
+	
 //	
 //	abstract void attaquer();
 //	

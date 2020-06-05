@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 public class TestMMO {
 
 	public static void main(String[] args) {
@@ -50,28 +52,41 @@ public class TestMMO {
 //		p4.setBlessure();
 //		System.out.println(p4);
 		
+//		PersonnageJoueur p = new PersonnageJoueur();
+//		System.out.println(p.getInventaire());
+//		System.out.println(p.getInventaire().size());
+//		System.out.println(p.getInventaire().get(0));
+//		System.out.println(p.getInventaire().get(2));
 		
-//		MenuCreation m2 = new MenuCreation();
-//		while (!m2.getConfirmation()) {
-//			System.out.println("");;
-//		}
-//		int[] stat2 = m2.getStats();
-//		String pseudo2 = m2.getPseudo();
-//		
-//		PersonnageJoueur p2 = new PersonnageJoueur(pseudo2,stat2[0],stat2[1],stat2[2],5,3,1,23,5,30,m2.degres);
-//		System.out.println(p2);
-//		
-//		String stats = p2.afficheStats();
-//		System.out.println(stats);
-//		
+		
+		MenuCreation m2 = new MenuCreation();
+		while (!m2.getConfirmation()) {
+			System.out.println("");;
+		}
+		int[] stat2 = m2.getStats();
+		String pseudo2 = m2.getPseudo();
+		
+		PersonnageJoueur p2 = new PersonnageJoueur(pseudo2,stat2[0],stat2[1],stat2[2],30,m2.degres);
+		System.out.println(p2);
+		
+		String stats = p2.afficheStats();
+		System.out.println(stats);
+		
 //		new Statistique(p2);
-//		
-//		new Menu(p2);
+		new Menu(p2);
 		
 		
 //		System.out.println(new Map(new PersonnageJoueur(),50,30,16,7));
-		for (Item m:Item.LISTE_ITEM) {
-			System.out.println(m);
-		}
+//		for (Item m:Item.LISTE_ITEM) {
+//			System.out.println(m);
+//		}
+		
+//		new PersonnageJoueur();
+//		String[] options = {"Nouvelle partie", "Charger une partie", "Quitter"};
+//		int input = JOptionPane.showOptionDialog(null,"Que souhaitez-vous faire","Choix du client",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,null,options,options[2]);
+//		System.out.println(input);
+		
+//		Map m = new Map();
+//		System.out.println(m);
 	}
 }
