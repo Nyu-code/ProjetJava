@@ -93,7 +93,44 @@ public class ClientProcessor extends JFrame implements Runnable{
          }
       }
    }
-   
+	public void Combat(PersonnageJoueur p1, PersonnageNonJoueur pnj) {
+		//Tant que le joueur est en combat la boucle tourne
+		verifTour(p1, pnj);
+		while (p1.enCombat) {
+			
+		if (p1.isTon_tour()) {
+			p1.affichePA();
+			p1.faireAction();
+			if (verifMort(p1)) { //Si le joueur est mort on lui demande ce qu'il veut faire
+				p1.setEnCombat();
+				demande_joueur();
+			}
+			else if (pnj.getHp() <= 0) { //Si le monstre est battu le joueur récupère les exp du monstre
+				p1.setEnCombat();
+				p1.setExp(p1.getExp()+pnj.getExp());
+			}
+			p1.setTon_tour(false); // à la fin du tour du joueur on lui enlève la priorité
+		}
+		
+		else { // tour du pnj
+			pnj.attaque_joueur(p1);
+			
+			if (verifMort(p1)) { //Si le joueur est mort durant l'attaque du pnj on lui demande ce qu'il veut faire
+				p1.setEnCombat();
+				demande_joueur();
+			}
+			p1.setTon_tour(true); // au tour du joueur
+		}
+	}
+}
+	public void verifTour(PersonnageJoueur p1, PersonnageNonJoueur pnj) { //permet de vérifier qui commence au début du tour
+		if (p1.getInit() > pnj.getInit()) { //Si l'initiative du joueur > init du pnj alrs p1 joue avant pnj
+			p1.setTon_tour(true);
+		}
+		else {
+			pnj.setTon_tour(true);
+		}
+	}
    public void Charger() {
 		JFileChooser select = new JFileChooser(""); // à déterminer l'endroit où sera les parties sauvegarder
 		select.addChoosableFileFilter(new FiltreExtensionFichier()); //On filtre le fichier selectionner par des .ser uniquement
@@ -127,31 +164,32 @@ public class ClientProcessor extends JFrame implements Runnable{
    }
    public boolean verifMort(PersonnageJoueur p1) {
 		if (p1.getBlessure() == "inconscient") { //le combat s'arrête si le joueur est mort
-			   ImageIcon icon = new ImageIcon("mort.png");
-			int choix = JOptionPane.showOptionDialog(this, "Vous êtes mort au combat",
-					   "état d'urgence", JOptionPane.DEFAULT_OPTION,
-					   JOptionPane.WARNING_MESSAGE, icon , Boutons ,Boutons[0]);
-			p1.setEnCombat();
-			if (choix == 0) {
-				// redemarre le jeu avec une nouvelle partie
-				//A COMPLETER
-			}
-			else if (choix == 1) {
-				Charger();
-			}
-			else { //On arrete la connexion du client avec le serveur si il souhaite quitter le jeu
-				try {
-					socket.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 			return true;
 		}
 		else {
 			return false;
 		}
 	}
+   public void demande_joueur() {// permet de demander au joueur après la mort ce qu'il veut faire
+	   ImageIcon icon = new ImageIcon("mort.png");
+	int choix = JOptionPane.showOptionDialog(this, "Vous êtes mort au combat",
+			   "état d'urgence", JOptionPane.DEFAULT_OPTION,
+			   JOptionPane.WARNING_MESSAGE, icon , Boutons ,Boutons[0]);
+	if (choix == 0) {
+		// redemarre le jeu avec une nouvelle partie
+		//A COMPLETER
+	}
+	else if (choix == 1) {
+		Charger();
+	}
+	else { //On arrete la connexion du client avec le serveur si il souhaite quitter le jeu
+		try {
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+   }
    
    //La méthode que nous utilisons pour lire les réponses
    private String read() throws IOException{      
