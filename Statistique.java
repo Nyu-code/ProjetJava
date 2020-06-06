@@ -9,7 +9,7 @@ public class Statistique extends JFrame{
 	PersonnageJoueur p;
 	JButton btnConfirmer;
 	JLabel lblInit,lblAtk,lblEsq,lblDef,lblDgt,lblFor,lblAdr,lblRes,lblDegre;
-	int force,adresse,resistance,degre;
+	int force,adresse,resistance,degre,init,atk,def,dgt,esq;
 	JButton[] btnPlus = {new JButton("+"),new JButton("+"),new JButton("+")};
 	JButton[] btnMoins = {new JButton("-"),new JButton("-"),new JButton("-")};
 	int IND_CAPACITES = 0;
@@ -148,13 +148,13 @@ public class Statistique extends JFrame{
 
 			c.gridx = 0;
 			c.gridy = 1;
-			pan.add(lblFor);
+			pan.add(lblFor,c);
 			c.gridx = 0;
 			c.gridy = 2;
-			pan.add(lblAdr);
+			pan.add(lblAdr,c);
 			c.gridx = 0;
 			c.gridy = 3;
-			pan.add(lblRes);
+			pan.add(lblRes,c);
 		}
 		
 		return pan;
