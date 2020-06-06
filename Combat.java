@@ -21,6 +21,10 @@ public class Combat extends JFrame{
 			if (verifMort(p1)) {
 				p1.setEnCombat();
 			}
+			else if (pnj.getHp() <= 0) {
+				p1.setEnCombat();
+				p1.setExp(p1.getExp()+pnj.getExp());
+			}
 			p1.setTon_tour(false);
 		}
 		else {

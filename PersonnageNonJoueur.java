@@ -21,8 +21,6 @@ public class PersonnageNonJoueur extends Personnage{
 		//on lui attribue l'item trouvé aléatoirement
 		this.objet = Item.LISTE_ITEM.get(alea);
 	}
-
-
 	public static String getType() {
 		return type;
 	}
@@ -50,103 +48,8 @@ public class PersonnageNonJoueur extends Personnage{
 		PersonnageNonJoueur.force = force;
 	}
 
-	public double getHp() {
-		return hp;
-	}
-
-
-	public void setHp(double hp) {
-		this.hp = hp;
-	}
-
-
-	public double getMaxHp() {
-		return maxHp;
-	}
-
-
 	public void setMaxHp(double maxHp) {
 		this.maxHp = maxHp;
-	}
-
-
-	public int getExp() {
-		return exp;
-	}
-
-
-	public void setExp(int exp) {
-		this.exp = exp;
-	}
-
-
-	public int getInit() {
-		return init;
-	}
-
-
-	public void setInit(int init) {
-		this.init = init;
-	}
-
-
-	public int getAtk() {
-		return atk;
-	}
-
-
-	public void setAtk(int atk) {
-		this.atk = atk;
-	}
-
-
-	public int getEsq() {
-		return esq;
-	}
-
-
-	public void setEsq(int esq) {
-		this.esq = esq;
-	}
-
-
-	public int getDef() {
-		return def;
-	}
-
-
-	public void setDef(int def) {
-		this.def = def;
-	}
-
-
-	public int getDgt() {
-		return dgt;
-	}
-
-
-	public void setDgt(int dgt) {
-		this.dgt = dgt;
-	}
-
-
-	public int getPosH() {
-		return posH;
-	}
-
-
-	public void setPosH(int posH) {
-		this.posH = posH;
-	}
-
-
-	public int getPosV() {
-		return posV;
-	}
-
-
-	public void setPosV(int posV) {
-		this.posV = posV;
 	}
 
 
@@ -154,21 +57,20 @@ public class PersonnageNonJoueur extends Personnage{
 		this.objet = objet;
 	}
 
+	public void attaque_joueur(PersonnageJoueur p1) { 
+		this.tirageAlea();
+		p1.tirageAlea();
+		
+		if(this.getAtk() > p1.getEsq()) {
 
-	public boolean isTon_tour() {
-		return ton_tour;
+			System.out.println("Le monstre à réussit son coup");
+			p1.setHp(p1.getHp()-this.atk);
+		}
+		else {
+			System.out.println("Vous avez esquivez l'attaque du monstre !");
+		}
+			
 	}
-
-
-	public void setTon_tour(boolean ton_tour) {
-		this.ton_tour = ton_tour;
-	}
-
-	public void attaque_joueur(PersonnageJoueur p1) {
-		System.out.println("Le monstre attaque !");
-		p1.setHp(p1.getHp()-this.atk);
-	}
-	
 	public String toString() {
 		return "type :" + PersonnageNonJoueur.getType() +
 				", forme :" + super.getBlessure() + ", objet :" + this.getObjet();

@@ -61,7 +61,7 @@ public class ClientProcessor extends JFrame implements Runnable{
                   break;
                   
                case "1":
-                  toSend = "";
+                  Charger();
                   break;
                   
                case "2":

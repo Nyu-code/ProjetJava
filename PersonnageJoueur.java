@@ -37,15 +37,7 @@ public class PersonnageJoueur extends Personnage{
 		//on s'occupe de ses objets équipés
 		this.protection = new TShirt();
 		this.droite = new Poing();
-		this.gauche = new Poing();
-		
-		this.init = this.adresse - this.protection.poids;
-		this.atk = this.adresse + this.droite.maniabilite + this.gauche.maniabilite;
-		this.esq = this.adresse - this.protection.poids;
-		this.def = this.resistance + this.protection.solidite;
-		this.dgt = this.force + this.droite.armimpact + this.gauche.armimpact;
-		
-		
+		this.gauche = new Poing();		
 		
 		//ajoute des objets de base pour se battre
 		this.baseInventaire();
@@ -68,12 +60,6 @@ public class PersonnageJoueur extends Personnage{
 		this.protection = new TShirt();
 		this.droite = new Poing();
 		this.gauche = new Poing();
-		
-		this.init = this.adresse - this.protection.poids;
-		this.atk = this.adresse + this.droite.maniabilite + this.gauche.maniabilite;
-		this.esq = this.adresse - this.protection.poids;
-		this.def = this.resistance + this.protection.solidite;
-		this.dgt = this.force + this.droite.armimpact + this.gauche.armimpact;
 		
 		this.degre = degre;
 		
@@ -292,13 +278,6 @@ public class PersonnageJoueur extends Personnage{
 		return indice;
 	}
 	
-	public void attaquer(PersonnageNonJoueur pnj) { //un PJ n'attaqu'un PNJ
-		this.changePA(-3);
-		System.out.println("Vous attaquez !");
-		pnj.setHp(pnj.getHp()-this.atk);
-		
-	}
-	
 	public void deplacer(Map m) {
 		
 		
@@ -386,47 +365,23 @@ public class PersonnageJoueur extends Personnage{
 		return "Votre niveau de blessure : " + super.getBlessure();
 	}
 	
-	public int[] tirageAlea() { //Systeme de tirage aléatoire
-        int de_adresse = 0;
-        int de_resistance = 0;
-        int de_force = 0;
-        
-        int[] resultat = new int[3];
-
-        int affichetirage = 0;
-        int tirageadresse = this.adresse; //Tant que tirageadresse est <= à 3 on peut ajouter un dé
-        for (de_adresse = 0; tirageadresse >= 3 ; de_adresse++) {
-            tirageadresse -= 3;
-            affichetirage += dee();
-        }
-        affichetirage += tirageadresse; // On ajoute ce qu'il reste aux Dé pour avoir le résultat du tirage
-        
-        resultat[0] = affichetirage;
-        System.out.println("Tirage aleatoire d'adresse :"+ de_adresse + "D" + (int) tirageadresse + " Resultat : " + affichetirage);
-
-        affichetirage = 0;
-        int tirageresistance = this.resistance;
-        for (de_resistance = 0; tirageresistance >= 3 ; de_resistance++) {
-            tirageresistance-=3;
-            affichetirage += dee();
-        }
-        affichetirage += tirageresistance;
-        
-        resultat[1] = affichetirage;
-        System.out.println("Tirage aleatoire de resistance :"+ de_resistance + "D" + (int) tirageresistance + " Resultat : " + affichetirage);
-
-        affichetirage = 0;
-        int tirageforce = this.force;
-        for (de_force = 0; tirageforce >= 3 ; de_force++) {
-            tirageforce-=3;
-            affichetirage += dee();
-        }
-        affichetirage += tirageforce;
-        
-        resultat[2] = affichetirage;
-        System.out.println("Tirage aleatoire de force :"+ de_force + "D" + (int) tirageforce + " Resultat : " + affichetirage);
-        return resultat;
-    }
+	public void attaquer(PersonnageNonJoueur pnj) { //un PJ n'attaqu'un PNJ
+		this.tirageAlea();
+		pnj.tirageAlea();
+		
+		if(this.getAtk()> pnj.getEsq()) {
+			this.changePA(-3);
+			System.out.println("Attaque réussie !");
+			this.setExp(this.getExp()+1);
+			pnj.setHp(pnj.getHp()-this.atk);
+		}
+		else {
+			this.changePA(-3);
+			System.out.println("L'ennemi à esquiver votre attaque !");
+		}
+			
+	}
+	
 	public String afficheStats() {
 		String s = "";
 		s += "Experience : " + super.getExp() + "\n";
@@ -443,6 +398,7 @@ public class PersonnageJoueur extends Personnage{
 		
 		return s;
 	}
+
 	
 	public void equiper(Item i) {
 		if (i instanceof Bouclier) {

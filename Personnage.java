@@ -18,7 +18,7 @@ public abstract class Personnage {
 	protected boolean protection_libre = true;
 	protected boolean enCombat = false;
 	protected boolean ton_tour = false;
-	
+	private int adresse,resistance,force,degre;
 	public Personnage() {
 		this.hp = maxHp;
 		this.setBlessure();
@@ -261,7 +261,53 @@ public abstract class Personnage {
             }
         }
     }
-	
+	public int[] tirageAlea() { //Systeme de tirage aléatoire
+        int de_adresse = 0;
+        int de_resistance = 0;
+        int de_force = 0;
+        
+        int[] resultat = new int[3];
+
+        int affichetirage = 0;
+        int tirageadresse = this.adresse; //Tant que tirageadresse est <= à 3 on peut ajouter un dé
+        for (de_adresse = 0; tirageadresse >= 3 ; de_adresse++) {
+            tirageadresse -= 3;
+            affichetirage += dee();
+        }
+        affichetirage += tirageadresse; // On ajoute ce qu'il reste aux Dé pour avoir le résultat du tirage
+        
+        resultat[0] = affichetirage;
+        System.out.println("Tirage aleatoire d'adresse :"+ de_adresse + "D" + (int) tirageadresse + " Resultat : " + affichetirage);
+
+        affichetirage = 0;
+        int tirageresistance = this.resistance;
+        for (de_resistance = 0; tirageresistance >= 3 ; de_resistance++) {
+            tirageresistance-=3;
+            affichetirage += dee();
+        }
+        affichetirage += tirageresistance;
+        
+        resultat[1] = affichetirage;
+        System.out.println("Tirage aleatoire de resistance :"+ de_resistance + "D" + (int) tirageresistance + " Resultat : " + affichetirage);
+
+        affichetirage = 0;
+        int tirageforce = this.force;
+        for (de_force = 0; tirageforce >= 3 ; de_force++) {
+            tirageforce-=3;
+            affichetirage += dee();
+        }
+        affichetirage += tirageforce;
+        
+        resultat[2] = affichetirage;
+        System.out.println("Tirage aleatoire de force :"+ de_force + "D" + (int) tirageforce + " Resultat : " + affichetirage);
+		this.init = resultat[0] - this.protection.poids;
+		this.atk = resultat[0] + this.droite.maniabilite + this.gauche.maniabilite;
+		this.esq = resultat[0] - this.protection.poids;
+		this.def = resultat[1] + this.protection.solidite;
+		this.dgt = resultat[2] + this.droite.armimpact + this.gauche.armimpact;
+		
+        return resultat;
+    }
 	public int getNbPot() { //méthode pour compter le nombre de potion dans l'inventaire
 		int compteur = 0;
 		for (int i  = 0; i< this.inventaire.size();i++) {

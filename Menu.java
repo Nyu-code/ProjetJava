@@ -102,6 +102,7 @@ public class Menu extends JFrame {
         try (FileOutputStream fos = new FileOutputStream(personnage.getPseudo()+""+format.format(date)+".ser");
                 ObjectOutputStream oos = new ObjectOutputStream(fos)){
             oos.writeObject(personnage);
+            //oos.writeObject(map);
 
         }catch(FileNotFoundException e){
             e.printStackTrace();
