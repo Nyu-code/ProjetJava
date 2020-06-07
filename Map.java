@@ -60,6 +60,8 @@ public class Map {
 				count++;
 			}
 		}
+		this.placerObstacle(30);
+		this.placerMonstre(25);
 		
 		centre[0] = (this.map.length)/2;
 		centre[1] = (this.map[0].length)/2;
@@ -105,6 +107,8 @@ public class Map {
 					count++;
 				}
 			}
+			this.placerObstacle(30);
+			this.placerMonstre(25);
 		}
 		
 	}
@@ -151,7 +155,9 @@ public class Map {
 			}
 	}
 	
-	public Map(ArrayList<PersonnageNonJoueur> listeNPC, ArrayList<Integer> posHNPC, ArrayList<Integer> posVNPC, PersonnageJoueur p, int dimx, int dimy, int poshPJ, int posvPJ) {
+	public Map(ArrayList<PersonnageNonJoueur> listeNPC, ArrayList<Integer> posHNPC,
+			ArrayList<Integer> posVNPC,ArrayList<Case> mur, ArrayList<Integer> ligneMur, ArrayList<Integer> colMur, 
+			PersonnageJoueur p, int dimx, int dimy, int poshPJ, int posvPJ) {
 		
 		if (dimx < 5 && dimy < 5) {
 			System.out.println("Les dimensions sont trop petites");
@@ -188,6 +194,7 @@ public class Map {
 						}
 				}
 			}
+			this.placerObstacleListe(mur, ligneMur, colMur);
 			this.placerPersonnage(listeNPC, posHNPC, posVNPC, this.listePersonnage, this.poshPNJ, this.posvPJ);
 		}
 	}
