@@ -1,13 +1,11 @@
-import java.io.Serializable;
 
-public class Case implements Serializable{
+public class Case {
 	public Object uneCase;
 	public boolean occupee;
 	public PersonnageJoueur p;
 	public PersonnageNonJoueur pnj;
+	public Mur m;
 	public Item i;
-	public String barriere;
-	public String obstacle = "X";
 	public static final String VIDE = " ";
 	
 	
@@ -31,14 +29,15 @@ public class Case implements Serializable{
 		this.occupee = true;
 	}
 	
-	public Case(String s) {
-		this.uneCase = s;
+	public Case(Mur m) {
+		this.uneCase = m;
 		this.occupee = true;
 	}
 	
 	public boolean getOccupee() {
 		return this.occupee;
 	}
+	
 	
 	public String toString() {
 		if (this.uneCase instanceof PersonnageJoueur) {
@@ -52,6 +51,11 @@ public class Case implements Serializable{
 		else if (this.uneCase instanceof PersonnageNonJoueur) {
 			return "m";
 		}
+		
+		else if (this.uneCase instanceof Mur) {
+			return "#";
+		}
+		
 		else {
 			return (String)this.uneCase;
 		}

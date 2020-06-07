@@ -1,10 +1,6 @@
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
-public class Map implements Serializable{
+public class Map {
 	ArrayList<PersonnageNonJoueur> listePNJ = new ArrayList<PersonnageNonJoueur>();
 	ArrayList<Integer> poshPNJ = new ArrayList<Integer>();
 	ArrayList<Integer> posvPNJ = new ArrayList<Integer>();
@@ -13,9 +9,16 @@ public class Map implements Serializable{
 	ArrayList<Integer> poshPJ = new ArrayList<Integer>();
 	ArrayList<Integer> posvPJ = new ArrayList<Integer>();
 	
+	ArrayList<Case> listeMur = new ArrayList<Case>();
+	ArrayList<Integer> murLigne = new ArrayList<Integer>();
+	ArrayList<Integer> murCol = new ArrayList<Integer>();
+	
+	
 	int[] centre = new int[2];
 	
 	ArrayList<Item> itemAuSol = new ArrayList<Item>();
+	
+	Mur mur;
 	
 	Case[][] map;
 	
@@ -40,10 +43,10 @@ public class Map implements Serializable{
 			
 			for (int j = 0; j<this.map[0].length;j++) {
 				if (i == 0 || i == this.map.length-1) {
-					this.map[i][j] = new Case("#");
+					this.map[i][j] = new Case(new Mur());
 				}
 				else if (j == 0 || j == this.map[0].length-1) {
-					this.map[i][j] = new Case("#");
+					this.map[i][j] = new Case(new Mur());
 				}
 				
 				else if (count == alea) {
@@ -52,7 +55,7 @@ public class Map implements Serializable{
 				}
 				
 				else {
-					this.map[i][j] = new Case(Case.VIDE);
+					this.map[i][j] = new Case();
 				}
 				count++;
 			}
@@ -87,17 +90,17 @@ public class Map implements Serializable{
 			for (int i = 0; i<map.length;i++) {
 				for (int j = 0; j<map[0].length;j++) {
 					if (i == 0 || i == map.length-1) {
-						map[i][j] = new Case("#");
+						map[i][j] = new Case(new Mur());
 						
 					} else if (j == 0 || j == map[0].length-1) {
-						map[i][j] = new Case("#");
+						map[i][j] = new Case(new Mur());
 						
 					} else if (count == alea) {
 						PersonnageJoueur p = new PersonnageJoueur();
 						this.addPJ(p, i, j);
 						
 					} else {
-						map[i][j] = new Case(Case.VIDE);
+						map[i][j] = new Case();
 					}
 					count++;
 				}
@@ -118,15 +121,14 @@ public class Map implements Serializable{
 
 			//création de la map
 			for (int i = 0; i<map.length;i++) {
-				int maxMob = 0;
 				for (int j = 0; j<map[0].length;j++) {
 					
 					if (i == 0 || i == map.length-1)													//condition de la bordure nord
 					{
-						map[i][j] = new Case("#");
+						map[i][j] = new Case(new Mur());
 					} else if (j == 0 || j == map[0].length-1) 											//condition de la bordure sud
 					{
-						map[i][j] = new Case("#");
+						map[i][j] = new Case(new Mur());
 					} else if (i == poshPJ && j == posvPJ) 												//condition pour placer un PJ
 					{
 //						if (j == 0 && j == map[0].length-1) {											//on vérifie que la position du PJ ne soit pas sur une bordure
@@ -141,10 +143,11 @@ public class Map implements Serializable{
 
 							
 
-					map[i][j] = new Case(Case.VIDE);
+					map[i][j] = new Case();
 					}
 				}
-			this.placerMonstre(15);
+			this.placerObstacle(40);
+			this.placerMonstre(25);
 			}
 	}
 	
@@ -163,11 +166,11 @@ public class Map implements Serializable{
 					
 					if (i == 0 || i == this.map.length-1)													//condition de la bordure nord
 					{
-						this.map[i][j] = new Case("#");
+						this.map[i][j] = new Case(new Mur());
 						
 					} else if (j == 0 || j == this.map[0].length-1) 											//condition de la bordure sud
 					{
-						this.map[i][j] = new Case("#");
+						this.map[i][j] = new Case(new Mur());
 						
 					} else if (i == p.posH && j == p.posV) 												//condition pour placer un PJ
 					{
@@ -181,7 +184,7 @@ public class Map implements Serializable{
 					} else
 						{
 
-							this.map[i][j] = new Case(Case.VIDE);
+							this.map[i][j] = new Case();
 						}
 				}
 			}
@@ -255,6 +258,30 @@ public class Map implements Serializable{
 		return -1;
 	}
 
+	public ArrayList<Case> getListeMur() {
+		return listeMur;
+	}
+
+	public ArrayList<Integer> getMurLigne() {
+		return murLigne;
+	}
+
+	public ArrayList<Integer> getMurCol() {
+		return murCol;
+	}
+
+	public void setListeMur(ArrayList<Case> listeMur) {
+		this.listeMur = listeMur;
+	}
+
+	public void setMurLigne(ArrayList<Integer> murLigne) {
+		this.murLigne = murLigne;
+	}
+
+	public void setMurCol(ArrayList<Integer> murCol) {
+		this.murCol = murCol;
+	}
+
 	public void setListePNJ(ArrayList<PersonnageNonJoueur> listePNJ) {
 		this.listePNJ = listePNJ;
 	}
@@ -288,7 +315,6 @@ public class Map implements Serializable{
 	}
 	
 	public void placerUnMonstre() {
-		System.out.println("Place un monstre");
 		int min = Math.min(this.map.length, this.map[0].length);
 		int max = Math.max(this.map.length, this.map[0].length);
 		int alea = Personnage.rand(min+1,(min*max-min-1));
@@ -331,7 +357,6 @@ public class Map implements Serializable{
 				Case caseVide = new Case();
 				if (this.map[posHPNJ.get(i)][posVPNJ.get(i)]==caseVide) {
 					this.map[posHPNJ.get(i)][posVPNJ.get(i)] = new Case(listePNJ.get(i));
-					System.out.println("PNJ Added");
 				} else {
 					System.out.println("L'une des cases est indisponible");
 				}
@@ -345,7 +370,6 @@ public class Map implements Serializable{
 				Case caseVide = new Case();
 				if (this.map[posHPJ.get(i)][posVPJ.get(i)]==caseVide) {
 					this.map[posHPJ.get(i)][posVPJ.get(i)] = new Case(listePJ.get(i));
-					System.out.println("PJ Added");
 				} else {
 					System.out.println("L'une des cases est indisponible");
 				}
@@ -368,6 +392,20 @@ public class Map implements Serializable{
 		}
 		return -1;
 
+	}
+	
+	public void addMur(Case m, int ligne, int col) {
+		this.map[ligne][col] = new Case(new Mur());
+		this.listeMur.add(m);
+		this.murLigne.add(ligne);
+		this.murCol.add(col);
+	}
+	
+	public void remplaceMur(Case m, int ligne, int col, int indice) {
+		this.map[ligne][col] = m;
+		this.listeMur.set(indice, m);
+		this.murLigne.set(indice, ligne);
+		this.murCol.set(indice, col);
 	}
 	
 	public void addPJ(PersonnageJoueur p, int posh, int posv) {
@@ -396,6 +434,86 @@ public class Map implements Serializable{
 		this.listePNJ.set(indice, p);
 		this.poshPNJ.set(indice, posh);
 		this.posvPNJ.set(indice, posv);
+	}
+	
+	public void placerObstacleHorizontal(int longueur) {
+		int min = Math.min(this.map.length, this.map[0].length);
+		int max = Math.max(this.map.length, this.map[0].length);
+		int alea = Personnage.rand(min+1,(min*max-min-1));
+		int count = 0;
+		for (int i = 0; i < this.map.length; i++) {
+			for (int j = 0; j < this.map[0].length;j++) {
+			
+				//on place le monstre aléatoirement
+				if (alea == count && this.map[i][j].uneCase==Case.VIDE)
+				{
+					for (int k = j; k<longueur;k++) {
+						if (this.map[i][k].uneCase==Case.VIDE || k < this.map[0].length) {
+							this.addMur(new Case(new Mur()), i, k);
+							System.out.println("Un mur");
+						}
+					}
+					break;
+				}
+				count++;
+			}
+		}
+		
+	}
+	
+	public void placerObstacleVertical(int longueur) {
+		
+		int min = Math.min(this.map.length, this.map[0].length);
+		int max = Math.max(this.map.length, this.map[0].length);
+		int alea = Personnage.rand(min+1,(min*max-min-1));
+		int count = 0;
+		for (int i = 0; i < this.map.length; i++) {
+			for (int j = 0; j < this.map[0].length;j++) {
+			
+				//on place le monstre aléatoirement
+				if (alea == count && this.map[i][j].uneCase==Case.VIDE)
+				{
+					for (int k = i; k<longueur;k++) {
+						if (this.map[k][j].uneCase==Case.VIDE || k < this.map.length) {
+							this.addMur(new Case(new Mur()), k, j);
+							System.out.println("Un mur");
+						}
+					}
+					break;
+				}
+				count++;
+			}
+		}
+	}
+	
+	public void placerObstacle(int nombre) {
+		for (int i = 0; i<nombre;i++) {
+			int longueur = Personnage.rand(16, 24);
+			
+			if (i%2==0) {
+				this.placerObstacleHorizontal(longueur);
+			} else {
+				this.placerObstacleVertical(longueur);
+			}
+			
+		}
+	}
+	
+	public void placerObstacleListe(ArrayList<Case> mur, ArrayList<Integer> ligne, ArrayList<Integer> col) {
+		
+		
+		int compteur = 0;
+		for (int i = 0; i < this.map.length; i++) {
+			for (int j = 0; j < this.map[0].length;j++) {
+			
+				//on place le monstre aléatoirement
+				if (i == ligne.get(compteur) && j == col.get(compteur))
+				{
+					this.remplaceMur(mur.get(compteur), ligne.get(compteur), col.get(compteur), compteur);
+					compteur++;
+				}
+			}
+		}
 	}
 	
 	public boolean estSurLaMap(PersonnageJoueur p) {
@@ -503,9 +621,9 @@ public class Map implements Serializable{
 	public String toString() {
 		String s = "";
 		
-		for (int i = 0; i < map.length; i++) {
-			for (int j = 0; j < map[0].length;j++) {
-				s += map[i][j];
+		for (int i = 0; i < this.map.length; i++) {
+			for (int j = 0; j < this.map[0].length;j++) {
+				s += this.map[i][j].toString();
 				if (j==map[0].length-1) {
 					s +="\n";
 				}
