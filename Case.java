@@ -1,6 +1,6 @@
+import java.io.Serializable;
 
-
-public class Case {
+public class Case implements Serializable{
 	public Object uneCase;
 	public boolean occupee;
 	public PersonnageJoueur p;

@@ -3,7 +3,6 @@ import java.awt.event.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
-
 import javax.swing.*;
 
 public class Menu extends JFrame {
@@ -19,7 +18,6 @@ public class Menu extends JFrame {
 	JButton[] btnInventaire = new JButton[16];
 	JButton[] btnAction;
 	Object[] options = {"Nouvelle partie", "Charger une partie", "Quitter"};
-	
 	static final int ZONE_INVENTAIRE = 1;
 	static final int ZONE_ACTIONS = 2;
 	static final int ZONE_STAT = 3;
@@ -77,32 +75,6 @@ public class Menu extends JFrame {
 		this.btnSauvegarde.addActionListener(new Listener(ZONE_AUTRE,CODE_SAUVEGARDER));
 		this.btnAttribuer.addActionListener(new Listener(ZONE_STAT,CODE_ATTRIBUER));
 	}
-
-	public void sauvegarder() {
-        //Demande de confirmation de sauvegarde pour éviter toute abusation et tout fail
-        int choix = JOptionPane.showConfirmDialog(this, "Êtes-vous sûr de vouloir sauvegarder ?", 
-                "Demande de confirmation pour sauvegarder", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (choix == 1) {
-            return;
-        }
-        //On crée la date à laquelle il sauvegarde le fichier et on l'implente
-        //dans le nom du fichier pour pouvoir se repérer lors des chargements de partie
-        DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        System.out.println(format.format(date));
-
-        //On sauvegarde le personnage et la map en les serialisant
-
-        try (FileOutputStream fos = new FileOutputStream(personnage.getPseudo()+""+format.format(date)+".ser");
-                ObjectOutputStream oos = new ObjectOutputStream(fos)){
-            oos.writeObject(personnage);
-
-        }catch(FileNotFoundException e){
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 	
 	public JPanel buildMenu(PersonnageJoueur p, Map m) {
 		JPanel menu = new JPanel();
@@ -183,7 +155,7 @@ public class Menu extends JFrame {
 		
 		c.gridx = 0;
 		c.gridy = 0;
-		//première ligne vide du gridlayout
+		//premi�re ligne vide du gridlayout
 		panInventaire.add(lblInventaire,c);
 		
 		c.gridy = 1;
@@ -394,12 +366,6 @@ public class Menu extends JFrame {
         	switch(zone) {
 	        	case ZONE_INVENTAIRE:
 	        		{
-	        			switch(code) {
-	        			case CODE_SAUVEGARDER:
-		        			{
-		        				sauvegarder();
-		        			}
-	        			}
 	        		break;
 	        		}
 	        	case ZONE_ACTIONS: 
@@ -423,13 +389,19 @@ public class Menu extends JFrame {
 		        				personnage.def = s.def;
 		        				personnage.dgt = s.dgt;
 		        				personnage.init = s.init;
-		        				System.out.println("Statistique(s) modifiée(s)");
+		        				System.out.println("Statistique(s) modifi�e(s)");
 		        			}
 	        			}
 	        		}
 	        		
 	        	case ZONE_AUTRE:
 	        		{
+	        			switch(code) {
+	        			case CODE_SAUVEGARDER:
+		        			{
+		        			
+		        			}
+	        			}
 	        		break;
 	        		}
         	}

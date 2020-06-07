@@ -1,4 +1,6 @@
-public class Potion extends Item {
+import java.io.Serializable;
+
+public class Potion extends Item implements Serializable{
 	public static final String categorieP 		= "potion";
 	public String type;	//type dans le tableau tabPotion
 	public double 	degat;

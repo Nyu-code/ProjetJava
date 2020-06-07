@@ -1,9 +1,10 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class PersonnageJoueur extends Personnage{
+public class PersonnageJoueur extends Personnage implements Serializable{
 	private String pseudo;
 	private static final String type="joueur";
 	private int pointAction = 6;
@@ -46,24 +47,27 @@ public class PersonnageJoueur extends Personnage{
 
 
 	public PersonnageJoueur(String pseudo, int force, int adresse, int resistance,
-							int exp, int degre)
-	{	
-		
+            int exp, int degre, int posh, int posv)
+{    
+
 		super(exp); //on appelle le constructeur de personnage avec les bons paramètres
-		
+
 		this.pseudo = pseudo;
-		
+
 		this.adresse = adresse;
 		this.resistance = resistance;
 		this.force = force;
-		
+
 		this.protection = new TShirt();
 		this.droite = new Poing();
 		this.gauche = new Poing();
-		
+
+		this.posH = posh;
+		this.posV = posv;
+
 		this.degre = degre;
-		
-	}
+		this.baseInventaire();
+}
 	
 	public String getType() {
 		return type;
@@ -230,7 +234,7 @@ public class PersonnageJoueur extends Personnage{
 		
 //		switch (action) {
 //			case ATTAQUER:{
-//				this.attaquer();
+//				this.attaquer(PersonnageNonJoueur pnj);
 //				break;
 //			}
 //			case UTILISER:{

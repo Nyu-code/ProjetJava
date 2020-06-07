@@ -1,6 +1,10 @@
-import java.util.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
-public class Map {
+public class Map implements Serializable{
 	ArrayList<PersonnageNonJoueur> listePNJ = new ArrayList<PersonnageNonJoueur>();
 	ArrayList<Integer> poshPNJ = new ArrayList<Integer>();
 	ArrayList<Integer> posvPNJ = new ArrayList<Integer>();

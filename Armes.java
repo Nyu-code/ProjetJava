@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Armes extends Equipement{
+public class Armes extends Equipement implements Serializable{
 	public String nom;
 	public int armimpact;
 	public int maniabilite;

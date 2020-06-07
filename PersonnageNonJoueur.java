@@ -1,6 +1,6 @@
-import java.util.*;
+import java.io.Serializable;
 
-public class PersonnageNonJoueur extends Personnage{
+public class PersonnageNonJoueur extends Personnage implements Serializable{
 	public double hp;
 	public double maxHp = 100;
 	private static final String type="monstre";

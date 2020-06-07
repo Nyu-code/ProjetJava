@@ -70,15 +70,34 @@ public class TestMMO {
 //		p3.addInventaire(bâton);
 //		p3.afficheInventaire();
 		
-//	    String host = "127.0.0.1";
-//	    int port = 2345;
-//	    
-//	    Serveur s = new Serveur(host,port);
-//	    s.open();
-//	    
-//	   System.out.println("Serveur initialisé.");
-//	   Thread t = new Thread(new Client(host, port));
-//	   t.start();
-	   
+//		MenuCreation m2 = new MenuCreation();
+//        while (!m2.getConfirmation()) {
+//            System.out.println("");;
+//        }
+//        int[] stat2 = m2.getStats();
+//        String pseudo2 = m2.getPseudo();
+//        
+//        PersonnageJoueur p2 = new PersonnageJoueur(pseudo2,stat2[0],stat2[1],stat2[2],30,m2.degres,1,1);
+//        System.out.println(p2);
+//        
+//        String stats = p2.afficheStats();
+//        System.out.println(stats);
+//        new Statistique(p2);
+	    MenuCreation m2 = new MenuCreation();
+        while (!m2.getConfirmation()) {
+            System.out.println("");;
+        }
+        int[] stat2 = m2.getStats();
+        String pseudo2 = m2.getPseudo();
+        
+        PersonnageJoueur p2 = new PersonnageJoueur(pseudo2,stat2[0],stat2[1],stat2[2],30,m2.degres,1,1);
+        System.out.println(p2);
+        
+        String stats = p2.afficheStats();
+        System.out.println(stats);
+        p2.afficheInventaire();
+        Map m = new Map(p2,57,43,6,6);
+        new Menu(p2, m);
+        System.out.println(m);
 	   }
 }
