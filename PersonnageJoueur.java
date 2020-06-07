@@ -1,10 +1,9 @@
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class PersonnageJoueur extends Personnage implements Serializable{
+public class PersonnageJoueur extends Personnage{
 	private String pseudo;
 	private static final String type="joueur";
 	private int pointAction = 6;
@@ -34,12 +33,14 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 		this.resistance = m.resistance;
 		this.force = m.force;
 		this.degre = m.degres;
+		this.posH = 1;
+		this.posV = 1;
 		
 		//on s'occupe de ses objets équipés
 		this.protection = new TShirt();
 		this.droite = new Poing();
-		this.gauche = new Poing();		
-		
+		this.gauche = new Poing();
+			
 		//ajoute des objets de base pour se battre
 		this.baseInventaire();
 	}
@@ -47,27 +48,27 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 
 
 	public PersonnageJoueur(String pseudo, int force, int adresse, int resistance,
-            int exp, int degre, int posh, int posv)
-{    
-
+							int exp, int degre, int posh, int posv)
+	{	
+		
 		super(exp); //on appelle le constructeur de personnage avec les bons paramètres
-
+		
 		this.pseudo = pseudo;
-
+		
 		this.adresse = adresse;
 		this.resistance = resistance;
 		this.force = force;
-
+		
 		this.protection = new TShirt();
 		this.droite = new Poing();
 		this.gauche = new Poing();
-
+		
 		this.posH = posh;
 		this.posV = posv;
-
+		
 		this.degre = degre;
 		this.baseInventaire();
-}
+	}
 	
 	public String getType() {
 		return type;
@@ -153,6 +154,7 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 		this.addInventaire(new Soin());
 		this.addInventaire(new Mana());
 		this.addInventaire(new Baton());
+		this.addInventaire(new Explosive());
 	}
 	
 	public ArrayList<Integer> indActPossible(){
@@ -234,7 +236,7 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 		
 //		switch (action) {
 //			case ATTAQUER:{
-//				this.attaquer(PersonnageNonJoueur pnj);
+//				this.attaquer();
 //				break;
 //			}
 //			case UTILISER:{
@@ -282,44 +284,72 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 		return indice;
 	}
 	
-	public void deplacer(Map m) {
+	public void attaquer(PersonnageNonJoueur pnj) { //un PJ n'attaqu'un PNJ
+		this.changePA(-3);
+		System.out.println("Vous attaquez !");
+		pnj.setHp(pnj.getHp()-this.atk);
+
+	}
+	
+	public Map deplacer(Map m) {
 		
 		
-		if (this.getPointAction()<2) {
-			return;
-		}
 		
+		Map map = m;
 		
-		ArrayList<String> deplacement = new ArrayList<>(Arrays.asList("haut","bas","gauche","droite"));
+		this.posH = m.getPoshPJ().get(0);
+		this.posV = m.getPosvPJ().get(0);
+		
 		//on sauvegarde les données des monstres ainsi que leur positions
+		
+		
 		ArrayList<PersonnageNonJoueur> listeMonstre = m.getListePNJ();
 		ArrayList<Integer> posVMonstre = m.getPosvPNJ();
 		ArrayList<Integer> posHMonstre = m.getPoshPNJ();
 		
+		System.out.println(m);
+		
+
+		
+		//premiere verification
 		Scanner sc = new Scanner(System.in);
-		boolean choix = false;
-		while (!choix) {
+		System.out.println("Choisissez votre déplacement : ");
+		//premiere verification
+		while (!sc.hasNext("[zZqQsSdDaAwW]")) {
 			try {
-				String choixDeplacement = sc.next();
-				if (deplacement.contains(choixDeplacement)) {
-					choix = true;
-				}
+				System.out.println("La saisi n'a pas été correct, réessayez : ");
+				sc.next();
 			} catch (InputMismatchException e) {
-				System.out.println("Nous n'avons pas reconnu votre choix, saisissez un déplacement correct (haut,bas,gauche,droite)");
+				System.out.println("Vous n'avez pas saisi de lettre, recommencez.");
 			}
 		}
+		char choixDeplacement = sc.next().charAt(0);
 		
-		
-		
-		
-		
-		if (this.enCombat == true) {
-			this.changePA(-2);
+		//verification que le joueur a bien entré Z/W pour avancer et que au dessus de lui, il n'y ait pas de barrière
+		if (Character.toString(choixDeplacement).matches("[zZwW]")) {
+			this.posH += 1;
+			map = new Map(listeMonstre,posVMonstre,posHMonstre, this, m.getMapCase()[0].length, m.getMapCase().length,this.posH,this.posV);
+			System.out.println("Haut");
+		//verification pour aller en bas
+			
+			
+		} else if (Character.toString(choixDeplacement).matches("[sS]")) {
+			this.posH -= 1;
+			map = new Map(listeMonstre,posVMonstre,posHMonstre, this, m.getMapCase()[0].length, m.getMapCase().length,this.posH,this.posV);
+			System.out.println("Bas");
+		//va a gauche
+		} else if (Character.toString(choixDeplacement).matches("[qQaA]")) {
+			this.posV -= 1;
+			map = new Map(listeMonstre,posVMonstre,posHMonstre, this, m.getMapCase()[0].length, m.getMapCase().length,this.posH,this.posV);
+			System.out.println("Gauche");
+		//va a droite
+		} else if (Character.toString(choixDeplacement).matches("[dD]")) {
+			this.posV += 1;
+			map = new Map(listeMonstre,posVMonstre,posHMonstre, this, m.getMapCase()[0].length, m.getMapCase().length,this.posH,this.posV);
+			System.out.println("Droite");
 		}
-		
-		
-		
-		System.out.println(("Vous vous déplacez"));
+		System.out.println("Vous vous déplacez");
+		return map;
 	}
 	
 	public void ramasser(int indice) { //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -369,23 +399,47 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 		return "Votre niveau de blessure : " + super.getBlessure();
 	}
 	
-	public void attaquer(PersonnageNonJoueur pnj) { //un PJ n'attaqu'un PNJ
-		this.tirageAlea();
-		pnj.tirageAlea();
-		
-		if(this.getAtk()> pnj.getEsq()) {
-			this.changePA(-3);
-			System.out.println("Attaque réussie !");
-			this.setExp(this.getExp()+1);
-			pnj.setHp(pnj.getHp()-this.atk);
-		}
-		else {
-			this.changePA(-3);
-			System.out.println("L'ennemi à esquiver votre attaque !");
-		}
-			
-	}
-	
+	public int[] tirageAlea() { //Systeme de tirage aléatoire
+        int de_adresse = 0;
+        int de_resistance = 0;
+        int de_force = 0;
+        
+        int[] resultat = new int[3];
+
+        int affichetirage = 0;
+        int tirageadresse = this.adresse; //Tant que tirageadresse est <= à 3 on peut ajouter un dé
+        for (de_adresse = 0; tirageadresse >= 3 ; de_adresse++) {
+            tirageadresse -= 3;
+            affichetirage += dee();
+        }
+        affichetirage += tirageadresse; // On ajoute ce qu'il reste aux Dé pour avoir le résultat du tirage
+        
+        resultat[0] = affichetirage;
+        System.out.println("Tirage aleatoire d'adresse :"+ de_adresse + "D" + (int) tirageadresse + " Resultat : " + affichetirage);
+
+        affichetirage = 0;
+        int tirageresistance = this.resistance;
+        for (de_resistance = 0; tirageresistance >= 3 ; de_resistance++) {
+            tirageresistance-=3;
+            affichetirage += dee();
+        }
+        affichetirage += tirageresistance;
+        
+        resultat[1] = affichetirage;
+        System.out.println("Tirage aleatoire de resistance :"+ de_resistance + "D" + (int) tirageresistance + " Resultat : " + affichetirage);
+
+        affichetirage = 0;
+        int tirageforce = this.force;
+        for (de_force = 0; tirageforce >= 3 ; de_force++) {
+            tirageforce-=3;
+            affichetirage += dee();
+        }
+        affichetirage += tirageforce;
+        
+        resultat[2] = affichetirage;
+        System.out.println("Tirage aleatoire de force :"+ de_force + "D" + (int) tirageforce + " Resultat : " + affichetirage);
+        return resultat;
+    }
 	public String afficheStats() {
 		String s = "";
 		s += "Experience : " + super.getExp() + "\n";
@@ -402,7 +456,6 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 		
 		return s;
 	}
-
 	
 	public void equiper(Item i) {
 		if (i instanceof Bouclier) {
@@ -552,6 +605,8 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 			}
 		}
 	}
+	
+	
 	
 	public String toString() {
 		return "pseudo: " + this.getPseudo() +", type: " + this.getType() + ", forme: " + super.getBlessure() + ", PA: " + this.getPointAction();
