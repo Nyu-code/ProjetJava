@@ -8,8 +8,8 @@ import javax.swing.border.*;
 public class Statistique extends JFrame{
 	PersonnageJoueur p;
 	JButton btnConfirmer;
-	JLabel lblInit,lblAtk,lblEsq,lblDef,lblDgt,lblFor,lblAdr,lblRes,lblDegre;
-	int force,adresse,resistance,degre,init,atk,def,dgt,esq;
+	JLabel lblInit,lblAtk,lblEsq,lblDef,lblDgt,lblFor,lblAdr,lblRes,lblXp;
+	int force,adresse,resistance,xp,init,atk,def,dgt,esq;
 	JButton[] btnPlus = {new JButton("+"),new JButton("+"),new JButton("+")};
 	JButton[] btnMoins = {new JButton("-"),new JButton("-"),new JButton("-")};
 	int IND_CAPACITES = 0;
@@ -30,10 +30,10 @@ public class Statistique extends JFrame{
 		force = p.getForce();
 		adresse = p.getAdresse();
 		resistance = p.getResistance();
-		degre = p.getDegre();
+		xp = p.getExp();
 		this.initStat(p);
 		this.initListener();
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
 		this.centrer(0.5);
 		this.setVisible(true);
 	}
@@ -46,11 +46,13 @@ public class Statistique extends JFrame{
 		panStat.setBorder(new EmptyBorder(5,5,5,5));
 		panStat.add(buildPanelJoueur(p.getPseudo()),BorderLayout.NORTH);
 		panStat.add(buildPanelCara(p.init, p.atk, p.esq,p.def,p.dgt),BorderLayout.WEST);
-		panStat.add(buildPanelCapacite(p.getForce(), p.getAdresse(), p.getResistance(), p.getDegre()),BorderLayout.EAST);
+		panStat.add(buildPanelCapacite(p.getForce(), p.getAdresse(), p.getResistance(), p.getExp()),BorderLayout.EAST);
 		panStat.add(buildPanelConfirmer(),BorderLayout.SOUTH);
+		
 	}
 	
 	public void initListener() {
+		
 		this.btnConfirmer.addActionListener(new Listener(ZONE_CONFIRMER,0));
 		for (int i = 0;i<3;i++) {
 			this.btnPlus[i].addActionListener(new Listener(i,CODE_PLUS));
@@ -93,16 +95,16 @@ public class Statistique extends JFrame{
 		return pan;
 	}
 	
-	public JPanel buildPanelCapacite(int force, int adr, int res, int degre) {
+	public JPanel buildPanelCapacite(int force, int adr, int res, int xp) {
 		JPanel pan = new JPanel();
-		lblDegre = new JLabel("Degré(s) disponible(s) : "+degre);
+		lblXp = new JLabel("EXP disponible(s) : "+xp);
 		pan.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
 		c.gridx = 0;
 		c.gridy = 0;
-		pan.add(lblDegre,c);
+		pan.add(lblXp,c);
 		lblFor = new JLabel("Force"+"("+force+")");
 		lblAdr = new JLabel("Adresse"+"("+adr+")");
 		lblRes = new JLabel("Resistance"+"("+res+")");
@@ -112,7 +114,7 @@ public class Statistique extends JFrame{
 		JLabel lblVide = new JLabel(" ");
 		pan.add(lblVide);
 		
-		if (degre!=0) {
+		if (xp!=0) {
 
 			c.gridx = 0;
 			c.gridy = 2;
@@ -176,6 +178,10 @@ public class Statistique extends JFrame{
 		this.setBounds((int)(dim.width - (cote)) / 2, (dim.height - cote) / 2, cote, cote);
 	}
 	
+	public boolean getConfirmation() {
+		return confirme;
+	}
+	
 	class Listener implements ActionListener {
 		private int zone;
         private int code;
@@ -194,32 +200,31 @@ public class Statistique extends JFrame{
 	        		{
 	        			System.out.println("Je confirme");
 	        			int input;
-		        		if (degre!=0)
+		        		if (xp!=0)
 		        		{
-		        			input = JOptionPane.showConfirmDialog(null,"Êtes-vous sûr de ses capacités? Les degres n'ont pas tous été distribués","Confirmation",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		        			input = JOptionPane.showConfirmDialog(null,"Êtes-vous sûr de ses capacités? L'xp n'ont pas tous été distribués","Confirmation",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		        		} else {
 		        			input = JOptionPane.showConfirmDialog(null,"Êtes-vous sûr de ses capacités ?","Confirmation",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		        		}
-		        		System.out.println(input);
 		        		if (input==0) 
-		        		{
+		        		{	
 		        			confirme = true;
 		        			dispose();
 		        		}
 		        		break;
 	        		}
-	        			
+
 	        	case ZONE_FORCE: 
 	        		{
 	        			switch(code) {
 		        			case CODE_PLUS:{
-		        				if (degre==0) {
-		        					System.out.println("Nombre de degrés indisponible !");
+		        				if ((xp-2*force)<0) {
+		        					System.out.println("EXP indisponible !");
 		        				} else {
 		        					System.out.println("Ajoute 1 de force");
-		        					degre -=1;
 		        					force += 1;
-		        					lblDegre.setText("Degré(s) disponible(s) : "+degre);
+		        					xp -= 2*force;
+		        					lblXp.setText("EXP disponible(s) : "+xp);
 		        					lblFor.setText("Force("+force+")");
 		        				}
 		        				break;
@@ -229,10 +234,10 @@ public class Statistique extends JFrame{
 		        				if (force==0) {
 		        					System.out.println("Impossible de retirer");
 		        				} else {
+		        					xp+=2*force;
 		        					force -= 1;
-		        					degre+=1;
 		        					System.out.println("Retire 1 de force");
-		        					lblDegre.setText("Degré(s) disponible(s) : "+degre);
+		        					lblXp.setText("EXP disponible(s) : "+ xp);
 		        					lblFor.setText("Force("+force+")");
 		        				}
 		        				break;
@@ -248,13 +253,13 @@ public class Statistique extends JFrame{
 	        			switch(code) {
 		        			case CODE_PLUS:
 		        			{
-		        				if (degre==0) {
-		        					System.out.println("Nombre de degrés indisponible !");
+		        				if ((xp-2*adresse)<0) {
+		        					System.out.println("EXP indisponible !");
 		        				} else {
 		        					System.out.println("Ajoute 1 d'adresse");
-		        					degre-=1;
+		        					xp-=2*adresse;
 		        					adresse += 1;
-		        					lblDegre.setText("Degré(s) disponible(s) : "+degre);
+		        					lblXp.setText("EXP disponible(s) : "+xp);
 		        					lblAdr.setText("Adresse("+adresse+")");
 		        				}
 		        				break;
@@ -265,8 +270,8 @@ public class Statistique extends JFrame{
 		        					System.out.println("Impossible de retirer");
 		        				} else {
 		        					adresse -= 1;
-		        					degre+=1;
-		        					lblDegre.setText("Degré(s) disponible(s) : "+degre);
+		        					xp+=2*adresse;
+		        					lblXp.setText("EXP disponible(s) : "+xp);
 		        					lblAdr.setText("Adresse("+adresse+")");
 		        				}
 		        				break;
@@ -281,12 +286,12 @@ public class Statistique extends JFrame{
 	        		{
 	        			switch(code) {
 		        			case CODE_PLUS:
-		        				if (degre==0) {
-		        					System.out.println("Nombre de degrés indisponible !");
+		        				if ((xp-2*resistance)<0) {
+		        					System.out.println("EXP indisponible !");
 		        				} else {
-		        					degre-=1;
 		        					resistance += 1;
-		        					lblDegre.setText("Degré(s) disponible(s) : "+degre);
+		        					xp-=2*resistance;
+		        					lblXp.setText("EXP disponible(s) : "+xp);
 		        					lblRes.setText("Resistance("+resistance+")");
 		        				}
 		        				break;
@@ -295,9 +300,9 @@ public class Statistique extends JFrame{
 		        				if (resistance==0) {
 		        					System.out.println("Impossible de retirer");
 		        				} else {
+		        					xp+=2*resistance;
 		        					resistance -= 1;
-		        					degre+=1;
-		        					lblDegre.setText("Degré(s) disponible(s) : "+degre);
+		        					lblXp.setText("EXP disponible(s) : "+xp);
 		        					lblRes.setText("Resistance("+resistance+")");
 		        				}
 		        				break;
