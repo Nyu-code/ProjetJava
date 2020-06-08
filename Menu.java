@@ -47,7 +47,7 @@ public class Menu extends JFrame {
 	static final int CODE_ATTRIBUER = 1;
 	
 	//ZONE INVENTAIRE
-
+	String information;
 	public Menu(PersonnageJoueur p, Map m) {
 		super("EHLPTMMMORPGSVR");
 		personnage = p;
@@ -90,32 +90,6 @@ public class Menu extends JFrame {
 		this.btnEnvoyer.addActionListener(new Listener(ZONE_AUTRE,CODE_CHAT));
 	}
 
-	public void sauvegarder() {
-        //Demande de confirmation de sauvegarde pour éviter toute abusation et tout fail
-        int choix = JOptionPane.showConfirmDialog(this, "Êtes-vous sûr de vouloir sauvegarder ?", 
-                "Demande de confirmation pour sauvegarder", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (choix == 1) {
-            return;
-        }
-        //On crée la date à laquelle il sauvegarde le fichier et on l'implente
-        //dans le nom du fichier pour pouvoir se repérer lors des chargements de partie
-        DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        System.out.println(format.format(date));
-
-        //On sauvegarde le personnage et la map en les serialisant
-
-        try (FileOutputStream fos = new FileOutputStream(personnage.getPseudo()+""+format.format(date)+".ser");
-                ObjectOutputStream oos = new ObjectOutputStream(fos)){
-            oos.writeObject(personnage);
-
-        }catch(FileNotFoundException e){
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-	
 	public JPanel buildMenu(PersonnageJoueur p, Map m) {
 		JPanel menu = new JPanel();
 		menu.setLayout(new GridLayout(2,1));
@@ -198,7 +172,7 @@ public class Menu extends JFrame {
 		
 		c.gridx = 0;
 		c.gridy = 0;
-		//première ligne vide du gridlayout
+		//premi�re ligne vide du gridlayout
 		panInventaire.add(lblInventaire,c);
 		
 		c.gridy = 1;
@@ -381,7 +355,9 @@ public class Menu extends JFrame {
 		return pan;
 	}
 	
-	
+	public String getInformation() {
+		return this.information;
+	}
 	
 	class Listener implements ActionListener {
 		private int zone;
@@ -422,16 +398,19 @@ public class Menu extends JFrame {
 	        				//CAS ARMES
 		        			case 0:{
 		        				txtChat.setText(txtChat.getText() + "\n" + "Je suis une arme.");
+		        				information = "equiper arme";
 		        				break;
 		        			}
 		        			//CAS VETEMENTS
 		        			case 1:{
 		        				txtChat.setText(txtChat.getText() + "\n" + "Je suis un vetement.");
+		        				information = "equiper vetement";
 		        				break;
 		        			}
 		        			//CAS POTION
 		        			case 2:{
 		        				txtChat.setText(txtChat.getText() + "\n" + "Je suis une potion.");
+		        				information = "equiper potion";
 		        				break;
 		        			}
 		        			//CAS AUTRE
@@ -449,10 +428,13 @@ public class Menu extends JFrame {
 	        			switch(code) {
 	        			case CODE_ATTAQUER:{
 	        				txtChat.setText(txtChat.getText() + "\n" + "Vous allez attaquer");
+	        				information = "attaquer";
 	        				break;
 	        			}
 	        			case CODE_DEPLACER:{
-	        				txtChat.setText(txtChat.getText() + "\n" + "Vous allez vous déplacer");
+	        				txtChat.setText(txtChat.getText() + "\n" + "Vous allez vous d�placer");
+	        				information = "deplacer";
+	        				
 	        				break;
 	        			}
 	        			case CODE_UTILISER:{
@@ -462,14 +444,17 @@ public class Menu extends JFrame {
 	        				for (int i = 0;i<personnage.getInventaire().size();i++) {
 	        					btnInventaire[i].addActionListener(new Listener(ZONE_INVENTAIRE,i));
 	        				}
+	        				information = "utiliser objet";
 	        				break;
 	        			}
 	        			case CODE_RAMADEPO:{
 	        				txtChat.setText(txtChat.getText() + "\n" + "Vous voulez ramasser ou deposer");
+	        				information = "ramasser objet";
 	        				break;
 	        			}
 	        			case CODE_FINIR:{
 	        				txtChat.setText(txtChat.getText() + "\n" + "Votre tour est fini");
+	        				information = "tour_fini";
 	        				break;
 	        			}
 	        			default:
@@ -502,7 +487,7 @@ public class Menu extends JFrame {
 		        				personnage.def = s.def;
 		        				personnage.dgt = s.dgt;
 		        				personnage.init = s.init;
-		        				System.out.println("Statistique(s) modifiée(s)");
+		        				System.out.println("Statistique(s) modifi�e(s)");
 		        				break;
 
 		        			}
@@ -518,12 +503,13 @@ public class Menu extends JFrame {
 	        			case CODE_SAUVEGARDER:
 		        			{
 		        				txtChat.setText(txtChat.getText() + "\n" + "Execution de la sauvegarde");
-		        				sauvegarder();
+		        				information = "sauvegarder";
 		        				break;
 		        			}
 	        			case CODE_QUITTER:
 	        				{
-	        					txtChat.setText(txtChat.getText() + "\n" + "Vous êtes sur le point de quitter le jeu, êtes vous-sûr ?");
+	        					txtChat.setText(txtChat.getText() + "\n" + "Vous �tes sur le point de quitter le jeu, �tes vous-s�r ?");
+	        					information = "quitter";
 	        					dispose();
 	        					break;
 	        				}

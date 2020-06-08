@@ -1,9 +1,11 @@
+import java.io.Serializable;
 
-
-public class Vetements extends Equipement{
+public class Vetements extends Equipement implements Serializable{
 	public String nom;
+	public int solidite;
+	public int poids; //poids = encombrement vetement
+	public int resistance;
 	public static final String categorie = "chester";
-
 	
 	public Vetements() {
 		this.nom = "";

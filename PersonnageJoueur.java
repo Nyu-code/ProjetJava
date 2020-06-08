@@ -33,12 +33,13 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 		this.resistance = m.resistance;
 		this.force = m.force;
 		this.degre = m.degres;
+		this.posH = 1;
+		this.posV = 1;
 		
 		//on s'occupe de ses objets équipés
 		this.protection = new TShirt();
 		this.droite = new Poing();
 		this.gauche = new Poing();
-		
 			
 		//ajoute des objets de base pour se battre
 		this.baseInventaire();
@@ -47,7 +48,7 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 
 
 	public PersonnageJoueur(String pseudo, int force, int adresse, int resistance,
-							int exp, int degre, Case c)
+							int exp, int degre, int posh, int posv)
 	{	
 		
 		super(exp); //on appelle le constructeur de personnage avec les bons paramètres
@@ -62,8 +63,9 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 		this.droite = new Poing();
 		this.gauche = new Poing();
 		
-		this.caseP = c;
-
+		this.posH = posh;
+		this.posV = posv;
+		
 		this.degre = degre;
 		this.baseInventaire();
 	}
@@ -283,36 +285,20 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 	}
 	
 	public void attaquer(PersonnageNonJoueur pnj) { //un PJ n'attaqu'un PNJ
-		this.changePA(-3);
-		System.out.println("Vous attaquez !");
-		pnj.setHp(pnj.getHp()-this.atk);
-
+		this.tirageAlea();
+		pnj.tirageAlea();
+		if (this.getAtk() > pnj.getEsq()) {
+			this.changePA(-3);
+			System.out.println("Votre attaque est une réussite !");
+			this.setExp(this.getExp() + 1);
+			pnj.setHp(pnj.getHp()-this.atk);
+		}
+		else {
+			this.changePA(-3);
+			System.out.println("Votre attaque n'a pas toucher");
+			
+		}
 	}
-	
-	public int deplacer() {
-
-        //premiere verification
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Choisissez votre déplacement : haut(11) , gauche (12), droite (13), bas (14)");
-        boolean choix = false;
-        int input = 0;
-        //premiere verification
-        while (!choix) {
-            try {
-
-                input = sc.nextInt();
-                if (input < 15 && input >10) {
-                    choix = true;
-                } else {
-                    System.out.println("La saisie n'est pas correcte.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Vous n'avez bien saisie un chiffre, recommencez.");
-            }
-        }
-        return input;
-
-    }
 	
 	public void ramasser(int indice) { //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		this.changePA(-2);
@@ -329,16 +315,16 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 		System.out.println("Vous avez deposé :" + inventaire.get(indice).toString());
 	}
 	
-	public void utiliserObjet(Item i) {
-		if (i instanceof Potion) {
-			this.potion((Potion)i);
-			System.out.println("Vous utilisez une potion !");
-		} else if (i instanceof Vetements) {
-			this.equiper((Vetements)i);
-		} else if (i instanceof Armes) {
-			this.equiper((Armes) i);
-		}
-	}
+	public void utiliserObjet(Item i, int ind) {
+        if (i instanceof Potion) {
+            this.potion((Potion)i, ind);
+            System.out.println("Vous utilisez une potion !");
+        } else if (i instanceof Vetements) {
+            this.equiper((Vetements) i);
+        } else if (i instanceof Armes) {
+            this.equiper((Armes) i);
+        }
+    }
 	
 	public boolean finir() {
 		System.out.println("Votre tour est terminé");
@@ -350,11 +336,13 @@ public class PersonnageJoueur extends Personnage implements Serializable{
 //	}
 	
 	
-	public void potion(Potion p) {
+	public void potion(Potion p, int i) {
 		System.out.println(this.getHp());
 		System.out.println(this.getHp()*p.degat);
 		if (p instanceof Mana) {
 			this.setPointAction(this.getPointAction()+p.pa);
+			this.getInventaire().remove(i);
+			
 		} else {
 			super.setHp(this.getHp() + this.getMaxHp()*p.degat);
 			super.setBlessure();
@@ -406,19 +394,20 @@ public class PersonnageJoueur extends Personnage implements Serializable{
         System.out.println("Tirage aleatoire de force :"+ de_force + "D" + (int) tirageforce + " Resultat : " + affichetirage);
         return resultat;
     }
+	
 	public String afficheStats() {
-		String s = "";
-		s += "Experience : " + super.getExp() + "\n";
+		String s = "Vos Statistiques : ";
+		s += " - Experience : " + super.getExp() + "\n";
 		
-		s += "Force : " + this.getForce() + "\n";
-		s += "Adresse : " + this.getAdresse() + "\n";
-		s += "Resistance : " + this.getResistance() + "\n";
+		s += " - Force : " + this.getForce() + "\n";
+		s += " - Adresse : " + this.getAdresse() + "\n";
+		s += " - Resistance : " + this.getResistance() + "\n";
 		
-		s += "Initiative : " + this.getInit() + "\n";
-		s += "Attaque : " + this.getAtk() + "\n";
-		s += "Esquive : " + this.getEsq() + "\n";
-		s += "Défense : " + this.getDef() + "\n";
-		s += "Dégâts : " + this.getDgt() + "\n";
+		s += " + Initiative : " + this.getInit() + "\n";
+		s += " + Attaque : " + this.getAtk() + "\n";
+		s += " + Esquive : " + this.getEsq() + "\n";
+		s += " + Défense : " + this.getDef() + "\n";
+		s += " + Dégâts : " + this.getDgt() + "\n";
 		
 		return s;
 	}

@@ -19,7 +19,7 @@ public abstract class Personnage {
 	protected boolean protection_libre = true;
 	protected boolean enCombat = false;
 	protected boolean ton_tour = false;
-	
+	private int adresse,resistance,force,degre;
 	public Personnage() {
 		this.hp = maxHp;
 		this.setBlessure();
@@ -86,15 +86,7 @@ public abstract class Personnage {
 	}
 
 	public double getMaxHp() {
-		return maxHp;
-	}
-
-	public Case getCaseP() {
-		return caseP;
-	}
-
-	public void setCaseP(Case caseP) {
-		this.caseP = caseP;
+		return this.maxHp;
 	}
 
 	public boolean isEnCombat() {
@@ -104,7 +96,13 @@ public abstract class Personnage {
 	public void setEnCombat() {
 		this.enCombat = !this.enCombat;
 	}
+	public Case getCaseP() {
+		return this.caseP;
+	}
 
+	public void setCaseP(Case caseP) {
+		this.caseP = caseP;
+	}
 	public void setHp(double hp) {
 		if (hp>maxHp && hp<0) {
 			new Exception("On ne peut pas modifier son HP");
@@ -228,20 +226,19 @@ public abstract class Personnage {
 	}
 	
 	
-	public void afficheInventaire() {
-		System.out.println("Inventaire ("+this.inventaire.size()+") : ");
+	public String afficheInventaire() {
 		String s = "";
+		s+= "Inventaire ("+this.inventaire.size()+") : ";
 		if (this.inventaire.size()==0) {
 			s = "vide";
 		}
 		else {
-			for (int i = 0; i<this.inventaire.size()-1 &&this.inventaire.get(i)!=null ; i++ ) {
+			for (int i = 0; i<this.inventaire.size()-1 && this.inventaire.get(i)!=null ; i++ ) {
 	            s += i+1 + ". " + this.inventaire.get(i).toString()+", ";
 	        }
 			s += this.inventaire.size() + ". " + this.inventaire.get(this.inventaire.size()-1).toString()+".";
 		}
-        System.out.println(s);
-        System.out.println("");
+        return s;
     }
 
     public void addInventaire(Item objet) {
@@ -252,7 +249,7 @@ public abstract class Personnage {
     	
     	else {
     		int i = 0;
-            while(i<(this.inventaire.size()) && !this.inventaire.get(i).equals(new Item())) {
+    		while(i<(this.inventaire.size()) && !this.inventaire.get(i).equals(new Item())) {
               i++;
             }
             this.inventaire.add(objet);
@@ -270,7 +267,53 @@ public abstract class Personnage {
             }
         }
     }
-	
+	public int[] tirageAlea() { //Systeme de tirage aléatoire
+        int de_adresse = 0;
+        int de_resistance = 0;
+        int de_force = 0;
+        
+        int[] resultat = new int[3];
+
+        int affichetirage = 0;
+        int tirageadresse = this.adresse; //Tant que tirageadresse est <= à 3 on peut ajouter un dé
+        for (de_adresse = 0; tirageadresse >= 3 ; de_adresse++) {
+            tirageadresse -= 3;
+            affichetirage += dee();
+        }
+        affichetirage += tirageadresse; // On ajoute ce qu'il reste aux Dé pour avoir le résultat du tirage
+        
+        resultat[0] = affichetirage;
+        System.out.println("Tirage aleatoire d'adresse :"+ de_adresse + "D" + (int) tirageadresse + " Resultat : " + affichetirage);
+
+        affichetirage = 0;
+        int tirageresistance = this.resistance;
+        for (de_resistance = 0; tirageresistance >= 3 ; de_resistance++) {
+            tirageresistance-=3;
+            affichetirage += dee();
+        }
+        affichetirage += tirageresistance;
+        
+        resultat[1] = affichetirage;
+        System.out.println("Tirage aleatoire de resistance :"+ de_resistance + "D" + (int) tirageresistance + " Resultat : " + affichetirage);
+
+        affichetirage = 0;
+        int tirageforce = this.force;
+        for (de_force = 0; tirageforce >= 3 ; de_force++) {
+            tirageforce-=3;
+            affichetirage += dee();
+        }
+        affichetirage += tirageforce;
+        
+        resultat[2] = affichetirage;
+        System.out.println("Tirage aleatoire de force :"+ de_force + "D" + (int) tirageforce + " Resultat : " + affichetirage);
+		this.init = resultat[0] - this.protection.poids;
+		this.atk = resultat[0] + this.droite.maniabilite + this.gauche.maniabilite;
+		this.esq = resultat[0] - this.protection.poids;
+		this.def = resultat[1] + this.protection.solidite;
+		this.dgt = resultat[2] + this.droite.armimpact + this.gauche.armimpact;
+		
+        return resultat;
+    }
 	public int getNbPot() { //méthode pour compter le nombre de potion dans l'inventaire
 		int compteur = 0;
 		for (int i  = 0; i< this.inventaire.size();i++) {
@@ -279,15 +322,6 @@ public abstract class Personnage {
 			}
 		}
 		return compteur;
-	}
-
-
-	public boolean isTon_tour() {
-		return ton_tour;
-	}
-
-	public void setTon_tour(boolean ton_tour) {
-		this.ton_tour = ton_tour;
 	}
 	
 	public void affichePotion() {
@@ -305,7 +339,13 @@ public abstract class Personnage {
 		System.out.println("Potion"+"("+nb+")");
 		System.out.println(s);
 	}
-	
+	public boolean isTon_tour() {
+		return this.ton_tour;
+	}
+
+	public void setTon_tour(boolean ton_tour) {
+		this.ton_tour = ton_tour;
+	}
 	
 	
 //	

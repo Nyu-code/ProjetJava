@@ -2,6 +2,8 @@ import java.io.Serializable;
 
 public class Armes extends Equipement implements Serializable{
 	public String nom;
+	public int armimpact;
+	public int maniabilite;
 	public static final String categorie="weapon"; //classer les armes vêtements etc
 
 	public Armes() {

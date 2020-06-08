@@ -196,8 +196,8 @@ public class ClientProcessor extends JFrame implements Runnable{
         case 2 :
   		  ArrayList<Case> Liste_autour = map.autour(p);
   		  for(int i = 0; i< Liste_autour.size() ; i++) {
-  			  if (Liste_autour.get(i).uneCase instanceof PersonnageNonJoueur) {
-  				  pnj = (PersonnageNonJoueur) Liste_autour.get(i).uneCase;
+  			  if (Liste_autour.get(i).contenu instanceof PersonnageNonJoueur) {
+  				  pnj = (PersonnageNonJoueur) Liste_autour.get(i).contenu;
           		  combat(p,pnj);
           	    Personnage ="\n" + p.toString()+"\n"+ p.afficheStats() + "\n" + p.afficheInventaire(); //On envoit toutes les informations au client
               	msg = map.toString();

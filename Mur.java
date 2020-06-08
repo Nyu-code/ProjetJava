@@ -1,6 +1,4 @@
-import java.io.Serializable;
-
-public class Mur implements Serializable {
+public class Mur {
 	public String unMur;
 	
 	public Mur() {

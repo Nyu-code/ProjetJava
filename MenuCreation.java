@@ -1,3 +1,4 @@
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.regex.*;
@@ -14,7 +15,7 @@ public class MenuCreation extends JFrame{
 	JButton btnConfirmer;
 	boolean confirme = false;
 	
-	JLabel lblDegre,lblForce,lblAdr,lblRes,lblPseudo,lblPseudoError,lblDegreError;
+	JLabel lblDegre,lblForce,lblAdr,lblRes,lblPseudo,lblPseudoError;
 	int force = 0;
 	int adresse = 0;
 	int resistance = 0;
@@ -75,6 +76,35 @@ public class MenuCreation extends JFrame{
 		
 		return pan;
 	}
+//	public JPanel buildPanelForce() {
+//		JPanel force = new JPanel();
+//		force.add(new JLabel("Force (0):"));
+//
+//		force.add(new JButton("+"));
+//		force.add(new JButton("-"));
+//
+//		return force;
+//	}
+//	
+//	public JPanel buildPanelAdresse() {
+//		JPanel adresse = new JPanel();
+//		adresse.add(new JLabel("Adresse (0):"));
+//
+//		adresse.add(new JButton("+"));
+//		adresse.add(new JButton("-"));
+//
+//		return adresse;
+//	}
+//	
+//	public JPanel buildPanelResistance() {
+//		JPanel resistance = new JPanel();
+//		resistance.add(new JLabel("Resistance (0):"));
+//
+//		resistance.add(new JButton("+"));
+//		resistance.add(new JButton("-"));
+//
+//		return resistance;
+//	}
 	
 	public JPanel buildPanelCarac() {
 		JPanel stat = new JPanel();
@@ -85,8 +115,6 @@ public class MenuCreation extends JFrame{
 		
 		lblDegre = new JLabel("Point(s) disponible(s) : "+degres);
 		stat.add(lblDegre);
-		lblDegreError = new JLabel("");
-		stat.add(lblDegreError);
 		
 		c.gridx = 0;
 		c.gridy= 2;
@@ -122,14 +150,18 @@ public class MenuCreation extends JFrame{
 		c.gridy= 4;
 		stat.add(btnMoins[2],c);
 		
-		c.gridx = 0;
-		c.gridy = 5;
-		lblDegreError = new JLabel("");
-		stat.add(lblDegreError,c);
-		
 		return stat;
 		
 	}
+//	public JPanel buildPanelStat() {
+//		JPanel pan = new JPanel();
+//		pan.setLayout(new GridBagLayout());
+//		pan.add(new JLabel("Point(s) disponible(s) : "+DEGRES));
+//		
+//		pan.add(buildPanelCarac());
+//		
+//		return pan;
+//	}
 	
 	public JPanel buildPanelConfirmer() {
 		JPanel confirmer = new JPanel();
@@ -182,26 +214,24 @@ public class MenuCreation extends JFrame{
 	        			System.out.println("Je confirme");
 	        			pseudo = getPseudo();
 	        			
+
+	        			
 	        			if (Pattern.matches("", pseudo) || Pattern.matches("  ", pseudo)) {
 	        				System.out.println("Le pseudo n'a pas été renseigné ou le pseudo contient des caractères spéciaux !");
 	        				lblPseudoError.setText("Incorrect !");
 	        				break;
 	        			} else {
-		        			int input = 0;
+		        			int input;
 		        			
 		        			if (degres!=0)
 		        			{
-		        				System.out.println("Les degrés n'ont pas tous été distribués !");
-		        				lblDegreError.setText("Distribués tous les points !");
-		        				break;
+		        				input = JOptionPane.showConfirmDialog(null,"Êtes-vous sûr de créer "+pseudo+"? Les degres n'ont pas tous été distribués","Confirmation",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		        			} else {
 		        				input = JOptionPane.showConfirmDialog(null,"Êtes-vous sûr de créer "+pseudo+"?","Confirmation",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		        			}
 		        			if (input==0) 
 		        			{
 		        				confirme = true;
-		        				System.out.println("Vous avez crée : " + pseudo + 
-		        					", avec comme caractéristique : Force = " + force + ", Adresse = " + adresse + ", Resistance = " + resistance);
 		        				dispose();
 		        			}
 	        			}
