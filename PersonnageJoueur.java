@@ -33,13 +33,12 @@ public class PersonnageJoueur extends Personnage{
 		this.resistance = m.resistance;
 		this.force = m.force;
 		this.degre = m.degres;
-		this.posH = 1;
-		this.posV = 1;
 		
 		//on s'occupe de ses objets équipés
 		this.protection = new TShirt();
 		this.droite = new Poing();
 		this.gauche = new Poing();
+		
 			
 		//ajoute des objets de base pour se battre
 		this.baseInventaire();
@@ -48,7 +47,7 @@ public class PersonnageJoueur extends Personnage{
 
 
 	public PersonnageJoueur(String pseudo, int force, int adresse, int resistance,
-							int exp, int degre, int posh, int posv)
+							int exp, int degre, Case c)
 	{	
 		
 		super(exp); //on appelle le constructeur de personnage avec les bons paramètres
@@ -63,9 +62,8 @@ public class PersonnageJoueur extends Personnage{
 		this.droite = new Poing();
 		this.gauche = new Poing();
 		
-		this.posH = posh;
-		this.posV = posv;
-		
+		this.caseP = c;
+
 		this.degre = degre;
 		this.baseInventaire();
 	}
@@ -291,66 +289,30 @@ public class PersonnageJoueur extends Personnage{
 
 	}
 	
-	public Map deplacer(Map m) {
-		
-		
-		
-		Map map = m;
-		
-		this.posH = m.getPoshPJ().get(0);
-		this.posV = m.getPosvPJ().get(0);
-		
-		//on sauvegarde les données des monstres ainsi que leur positions
-		
-		
-		ArrayList<PersonnageNonJoueur> listeMonstre = m.getListePNJ();
-		ArrayList<Integer> posVMonstre = m.getPosvPNJ();
-		ArrayList<Integer> posHMonstre = m.getPoshPNJ();
-		
-		System.out.println(m);
-		
+	public int deplacer() {
 
-		
-		//premiere verification
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Choisissez votre déplacement : ");
-		//premiere verification
-		while (!sc.hasNext("[zZqQsSdDaAwW]")) {
-			try {
-				System.out.println("La saisi n'a pas été correct, réessayez : ");
-				sc.next();
-			} catch (InputMismatchException e) {
-				System.out.println("Vous n'avez pas saisi de lettre, recommencez.");
-			}
-		}
-		char choixDeplacement = sc.next().charAt(0);
-		
-		//verification que le joueur a bien entré Z/W pour avancer et que au dessus de lui, il n'y ait pas de barrière
-		if (Character.toString(choixDeplacement).matches("[zZwW]")) {
-			this.posH += 1;
-			map = new Map(listeMonstre,posVMonstre,posHMonstre, this, m.getMapCase()[0].length, m.getMapCase().length,this.posH,this.posV);
-			System.out.println("Haut");
-		//verification pour aller en bas
-			
-			
-		} else if (Character.toString(choixDeplacement).matches("[sS]")) {
-			this.posH -= 1;
-			map = new Map(listeMonstre,posVMonstre,posHMonstre, this, m.getMapCase()[0].length, m.getMapCase().length,this.posH,this.posV);
-			System.out.println("Bas");
-		//va a gauche
-		} else if (Character.toString(choixDeplacement).matches("[qQaA]")) {
-			this.posV -= 1;
-			map = new Map(listeMonstre,posVMonstre,posHMonstre, this, m.getMapCase()[0].length, m.getMapCase().length,this.posH,this.posV);
-			System.out.println("Gauche");
-		//va a droite
-		} else if (Character.toString(choixDeplacement).matches("[dD]")) {
-			this.posV += 1;
-			map = new Map(listeMonstre,posVMonstre,posHMonstre, this, m.getMapCase()[0].length, m.getMapCase().length,this.posH,this.posV);
-			System.out.println("Droite");
-		}
-		System.out.println("Vous vous déplacez");
-		return map;
-	}
+        //premiere verification
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Choisissez votre déplacement : haut(11) , gauche (12), droite (13), bas (14)");
+        boolean choix = false;
+        int input = 0;
+        //premiere verification
+        while (!choix) {
+            try {
+
+                input = sc.nextInt();
+                if (input < 15 && input >10) {
+                    choix = true;
+                } else {
+                    System.out.println("La saisie n'est pas correcte.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Vous n'avez bien saisie un chiffre, recommencez.");
+            }
+        }
+        return input;
+
+    }
 	
 	public void ramasser(int indice) { //pour plus tard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		this.changePA(-2);
@@ -371,6 +333,10 @@ public class PersonnageJoueur extends Personnage{
 		if (i instanceof Potion) {
 			this.potion((Potion)i);
 			System.out.println("Vous utilisez une potion !");
+		} else if (i instanceof Vetements) {
+			this.equiper((Vetements)i);
+		} else if (i instanceof Armes) {
+			this.equiper((Armes) i);
 		}
 	}
 	

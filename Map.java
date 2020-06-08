@@ -2,13 +2,9 @@ import java.util.*;
 
 public class Map {
 	ArrayList<PersonnageNonJoueur> listePNJ = new ArrayList<PersonnageNonJoueur>();
-	ArrayList<Integer> poshPNJ = new ArrayList<Integer>();
-	ArrayList<Integer> posvPNJ = new ArrayList<Integer>();
 	
 	ArrayList<PersonnageJoueur> listePersonnage = new ArrayList<PersonnageJoueur>();
-	ArrayList<Integer> poshPJ = new ArrayList<Integer>();
-	ArrayList<Integer> posvPJ = new ArrayList<Integer>();
-	
+
 	ArrayList<Case> listeMur = new ArrayList<Case>();
 	ArrayList<Integer> murLigne = new ArrayList<Integer>();
 	ArrayList<Integer> murCol = new ArrayList<Integer>();
@@ -24,7 +20,7 @@ public class Map {
 	
 	public Map() { //une map doit toujours avoir des parametres impairs
 		
-		this.map = new Case[32][16];
+		this.map = new Case[55][47];
 		
 		int min = Math.min(this.map.length, this.map[0].length);
 		int max = Math.max(this.map.length, this.map[0].length);
@@ -139,7 +135,7 @@ public class Map {
 	
 	public Map(ArrayList<PersonnageNonJoueur> listeNPC, ArrayList<Integer> posHNPC,
 			ArrayList<Integer> posVNPC,ArrayList<Case> mur, ArrayList<Integer> ligneMur, ArrayList<Integer> colMur, 
-			PersonnageJoueur p, int dimx, int dimy, int poshPJ, int posvPJ) {
+			PersonnageJoueur p, int dimx, int dimy) {
 		
 		if (dimx < 5 && dimy < 5) {
 			System.out.println("Les dimensions sont trop petites");
@@ -155,7 +151,7 @@ public class Map {
 					if (i == 0 || i == this.map.length-1 || j == 0 || j == this.map[0].length-1) {
 						this.map[i][j] = new Case(new Mur(),i,j);
 					} 
-					else if (i == p.posH && j == p.posV) 												//condition pour placer un PJ
+					else if (i == p.getCaseP().ligne && j == p.getCaseP().col) 												//condition pour placer un PJ
 					{
 						if (j == 0 && j == this.map[0].length-1) {											//on vérifie que la position du PJ ne soit pas sur une bordure
 							System.out.println("Impossible de placer le personnage" + p.getPseudo());
@@ -172,7 +168,7 @@ public class Map {
 				}
 			}
 			this.placerObstacleListe(mur, ligneMur, colMur);
-			this.placerPersonnage(listeNPC, posHNPC, posVNPC, this.listePersonnage, this.poshPNJ, this.posvPJ);
+			this.placerPersonnage(listeNPC, posHNPC, posVNPC, this.listePersonnage);
 		}
 	}
 	
@@ -181,25 +177,13 @@ public class Map {
 		return listePNJ;
 	}
 
-	public ArrayList<Integer> getPoshPNJ() {
-		return poshPNJ;
-	}
 
-	public ArrayList<Integer> getPosvPNJ() {
-		return posvPNJ;
-	}
 
 	public ArrayList<PersonnageJoueur> getListePersonnage() {
 		return listePersonnage;
 	}
 
-	public ArrayList<Integer> getPoshPJ() {
-		return poshPJ;
-	}
 
-	public ArrayList<Integer> getPosvPJ() {
-		return posvPJ;
-	}
 
 	public ArrayList<Item> getItemAuSol() {
 		return itemAuSol;
@@ -223,23 +207,12 @@ public class Map {
 	}
 	
 	public int getPosHJoueur(PersonnageJoueur p) {
-		int i = this.getIndPersonnage(p);
-		
-		if (i != -1) {
-			return this.poshPJ.get(i);
-		}
-		
-		return -1;
+		return p.getCaseP().ligne;
 	}
 	
 	public int getPosVJoueur(PersonnageJoueur p) {
-		int i = this.getIndPersonnage(p);
-		
-		if (i != -1) {
-			return this.posvPJ.get(i);
-		}
-		
-		return -1;
+
+		return p.getCaseP().col;
 	}
 
 	public ArrayList<Case> getListeMur() {
@@ -270,24 +243,8 @@ public class Map {
 		this.listePNJ = listePNJ;
 	}
 
-	public void setPoshPNJ(ArrayList<Integer> poshPNJ) {
-		this.poshPNJ = poshPNJ;
-	}
-
-	public void setPosvPNJ(ArrayList<Integer> posvPNJ) {
-		this.posvPNJ = posvPNJ;
-	}
-
 	public void setListePersonnage(ArrayList<PersonnageJoueur> listePersonnage) {
 		this.listePersonnage = listePersonnage;
-	}
-
-	public void setPoshPJ(ArrayList<Integer> poshPJ) {
-		this.poshPJ = poshPJ;
-	}
-
-	public void setPosvPJ(ArrayList<Integer> posvPJ) {
-		this.posvPJ = posvPJ;
 	}
 
 	public void setItemAuSol(ArrayList<Item> itemAuSol) {
@@ -307,7 +264,7 @@ public class Map {
 			for (int j = 0; j < this.map[0].length;j++) {
 			
 				//on place le monstre aléatoirement
-				if (alea == count && this.map[i][j].uneCase==Case.VIDE)
+				if (alea == count && this.map[i][j].contenu==Case.VIDE)
 				{
 				//ajout d'un monstre dans la liste des monstres
 				PersonnageNonJoueur pnj = new PersonnageNonJoueur();
@@ -326,11 +283,11 @@ public class Map {
 	}
 	
 	public void placerJoueur(PersonnageJoueur p) {
-		this.addPJ(p, p.posH, p.posV);
+		this.addPJ(p, p.getCaseP().ligne, p.getCaseP().col);
 	}
 	
 	public void placerPersonnage(ArrayList<PersonnageNonJoueur> listePNJ, ArrayList<Integer> posHPNJ, ArrayList<Integer> posVPNJ, 
-								ArrayList<PersonnageJoueur> listePJ, ArrayList<Integer> posHPJ, ArrayList<Integer> posVPJ) {
+								ArrayList<PersonnageJoueur> listePJ) {
 		
 		if (listePNJ.size()==0 && listePJ.size()==0){
 			return;
@@ -352,8 +309,12 @@ public class Map {
 		if (listePJ.size() > 0) {
 			for (int i = 0; i<listePJ.size();i++) {
 				Case caseVide = new Case(posVPNJ.get(i),posVPNJ.get(i));
-				if (this.map[posHPJ.get(i)][posVPJ.get(i)]==caseVide) {
-					this.map[posHPJ.get(i)][posVPJ.get(i)] = new Case(listePJ.get(i),posVPNJ.get(i),posVPNJ.get(i));
+				
+				int ligne = listePJ.get(i).getCaseP().ligne;
+				int col = listePJ.get(i).getCaseP().col;
+				
+				if (this.map[ligne][col]==caseVide) {
+					this.map[ligne][col] = new Case(listePJ.get(i),posVPNJ.get(i),posVPNJ.get(i));
 				} else {
 					System.out.println("L'une des cases est indisponible");
 				}
@@ -393,31 +354,30 @@ public class Map {
 	}
 	
 	public void addPJ(PersonnageJoueur p, int posh, int posv) {
-		this.map[posh][posv] = new Case(p,posh,posv);
+		p.setCaseP(new Case(p,posh,posv));
+		this.map[posh][posv] = p.getCaseP();
 		this.listePersonnage.add(p);
-		this.poshPJ.add(posh);
-		this.posvPJ.add(posv);
 	}
 	
 	public void addPNJ(PersonnageNonJoueur p, int posh, int posv) {
-		this.map[posh][posv] = new Case(p,posh,posv);
+		Case c = new Case(p,posh,posv);
+		p.setCaseP(c);
+		this.map[posh][posv] = c;
 		this.listePNJ.add(p);
-		this.poshPJ.add(posh);
-		this.poshPNJ.add(posv);
 	}
 	
 	public void remplacePJ(PersonnageJoueur p, int posh, int posv, int indice) {
-		this.map[posh][posv] = new Case(p,posh,posv);
+		Case c = new Case(p,posh,posv);
+		p.setCaseP(c);
+		this.map[posh][posv] = c;
 		this.listePersonnage.set(indice, p);
-		this.poshPJ.set(indice, posh);
-		this.posvPJ.set(indice, posv);
 	}
 	
 	public void remplacePNJ(PersonnageNonJoueur p, int posh, int posv, int indice) {
-		this.map[posh][posv] = new Case(p,posh,posv);
+		Case c = new Case(p,posh,posv);
+		p.setCaseP(c);
+		this.map[posh][posv] = c;
 		this.listePNJ.set(indice, p);
-		this.poshPNJ.set(indice, posh);
-		this.posvPNJ.set(indice, posv);
 	}
 	
 	public void placerObstacleHorizontal(int longueur) {
@@ -429,10 +389,10 @@ public class Map {
 			for (int j = 0; j < this.map[0].length;j++) {
 			
 				//on place le monstre aléatoirement
-				if (alea == count && this.map[i][j].uneCase==Case.VIDE)
+				if (alea == count && this.map[i][j].contenu==Case.VIDE)
 				{
 					for (int k = j; k<longueur;k++) {
-						if (this.map[i][k].uneCase==Case.VIDE || k < this.map[0].length) {
+						if (this.map[i][k].contenu==Case.VIDE || k < this.map[0].length) {
 							this.addMur(new Case(new Mur(),i,k), i, k);
 						}
 					}
@@ -454,10 +414,10 @@ public class Map {
 			for (int j = 0; j < this.map[0].length;j++) {
 			
 				//on place le monstre aléatoirement
-				if (alea == count && this.map[i][j].uneCase==Case.VIDE)
+				if (alea == count && this.map[i][j].contenu==Case.VIDE)
 				{
 					for (int k = i; k<longueur;k++) {
-						if (this.map[k][j].uneCase==Case.VIDE || k < this.map.length) {
+						if (this.map[k][j].contenu==Case.VIDE || k < this.map.length) {
 							this.addMur(new Case(new Mur(),k,j), k, j);
 						}
 					}
@@ -503,8 +463,8 @@ public class Map {
 		ArrayList<Integer> pos = new ArrayList<Integer>(2);
 		for (PersonnageJoueur personnage:listePersonnage) {
 			if (personnage == p) {
-				pos.add(personnage.getPosH());
-				pos.add(personnage.getPosV());
+				pos.add(personnage.getCaseP().ligne);
+				pos.add(personnage.getCaseP().col);
 			}
 		}
 		return pos;
@@ -539,8 +499,8 @@ public class Map {
 	public ArrayList<Case> autour(Personnage p){
 		ArrayList<Case> autourPJ = new ArrayList<>(4);
 
-		int posh = p.posH;
-		int posv = p.posV;
+		int posh = p.getCaseP().ligne;
+		int posv = p.getCaseP().col;
 		
 		//au dessus du personnage
 		autourPJ.add(this.map[posh-1][posv]);
@@ -554,40 +514,40 @@ public class Map {
 		return autourPJ;
 	}
 	
-	public void deplacer(PersonnageJoueur p, String s) {
-		
+	public void deplacer(PersonnageJoueur p, int c) {
+		Case pos = new Case(p,p.getCaseP().ligne,p.getCaseP().col);
 		ArrayList<Case> autour = this.autour(p);
 		
-		if (s.matches("[zZwW]")) {
+		if (c == 11) {
 			if (autour.get(0).occupee==false) {
-				this.intervertiCase(this.map[p.posH][p.posV], this.map[p.posH-1][p.posV]);
+				this.deplacement(p, this.map[p.getCaseP().ligne-1][p.getCaseP().col]);
 				System.out.println("Haut");
 			}
 			else {
 				System.out.println("Déplacement impossible");
 			}
 			
-		} else if (s.matches("[qQ]")) {
+		} else if (c == 12) {
 			if (autour.get(1).occupee==false) {
-				this.intervertiCase(this.map[p.posH][p.posV], this.map[p.posH][p.posV-1]);
+				this.deplacement(p, this.map[p.getCaseP().ligne][p.getCaseP().col-1]);
 				System.out.println("Gauche");
 			}
 			else {
 				System.out.println("Déplacement impossible");
 			}
 			
-		} else if (s.matches("[dD]")) {
+		} else if (c == 13) {
 			if (autour.get(2).occupee==false) {
-				this.intervertiCase(this.map[p.posH][p.posV], this.map[p.posH][p.posV+1]);
+				this.deplacement(p, this.map[p.getCaseP().ligne][p.getCaseP().col+1]);
 				System.out.println("Droite");
 			}
 			else {
 				System.out.println("Déplacement impossible");
 			}
 			
-		} else if (s.matches("[sS]")) {
+		} else if (c == 14) {
 			if (autour.get(3).occupee==false) {
-				this.intervertiCase(this.map[p.posH][p.posV], this.map[p.posH+1][p.posV]);
+				this.deplacement(p, this.map[p.getCaseP().ligne+1][p.getCaseP().col]);
 				System.out.println("Bas");
 			}
 			else {
@@ -596,17 +556,18 @@ public class Map {
 		}
 	}
 	
-	public void intervertiCase(Case c1, Case c2) {
-		Case temp = c1;
-		this.map[c1.ligne][c1.col] = new Case(c2);
-		this.map[c2.ligne][c2.col] = new Case(temp);
+	public void deplacement(PersonnageJoueur p, Case c) {
+		//il faut bien changer le contenu et le statut "occupee" sinon le joueur ne pourra pas revenir sur sa case de départ
+		this.map[p.getCaseP().ligne][p.getCaseP().col].contenu = Case.VIDE;
+		this.map[p.getCaseP().ligne][p.getCaseP().col].occupee = false;
+		
+		this.map[c.ligne][c.col].contenu = p;
+		this.map[c.ligne][c.col].occupee = true;
+		this.listePersonnage.get(0).setCaseP(new Case(p,c.ligne,c.col));
 		
 	}
 	
-	public void actualisePos(PersonnageJoueur p) {
-		this.map[p.posH][p.posV] = new Case(p,p.posH,p.posV);
-	}
-	
+
 	public void deplacer(PersonnageNonJoueur npc) {
 		
 	}

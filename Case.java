@@ -2,7 +2,7 @@
 public class Case {
 	public int col;
 	public int ligne;
-	public Object uneCase;
+	public Object contenu;
 	public boolean occupee;
 	public PersonnageJoueur p;
 	public PersonnageNonJoueur pnj;
@@ -14,42 +14,42 @@ public class Case {
 	public Case(int ligne, int col) {
 		this.ligne = ligne;
 		this.col = col;
-		this.uneCase = VIDE;
+		this.contenu = VIDE;
 		this.occupee = false;
 	}
 	
 	public Case(PersonnageJoueur p,int ligne,int col) {
 		this.ligne = ligne;
 		this.col = col;
-		this.uneCase = p;
+		this.contenu = p;
 		this.occupee = true;
 	}
 	
 	public Case(PersonnageNonJoueur m,int ligne,int col) {
 		this.ligne = ligne;
 		this.col = col;
-		this.uneCase = m;
+		this.contenu = m;
 		this.occupee = true;
 	}
 	
 	public Case(Item i,int ligne,int col) {
 		this.ligne = ligne;
 		this.col = col;
-		this.uneCase = i;
+		this.contenu = i;
 		this.occupee = true;
 	}
 	
 	public Case(Mur m,int ligne,int col) {
 		this.ligne = ligne;
 		this.col = col;
-		this.uneCase = m;
+		this.contenu = m;
 		this.occupee = true;
 	}
 	
 	public Case(Case c) {
 		this.ligne = c.ligne;
 		this.col = c.col;
-		this.uneCase = c.uneCase;
+		this.contenu = c.contenu;
 		this.occupee = c.occupee;
 	}
 	
@@ -59,24 +59,24 @@ public class Case {
 	
 	
 	public String toString() {
-		if (this.uneCase instanceof PersonnageJoueur) {
+		if (this.contenu instanceof PersonnageJoueur) {
 			return "p";
 		}
 		
-		else if (this.uneCase instanceof Item) {
+		else if (this.contenu instanceof Item) {
 			return "i";
 		}
 		
-		else if (this.uneCase instanceof PersonnageNonJoueur) {
+		else if (this.contenu instanceof PersonnageNonJoueur) {
 			return "m";
 		}
 		
-		else if (this.uneCase instanceof Mur) {
+		else if (this.contenu instanceof Mur) {
 			return "#";
 		}
 		
 		else {
-			return (String)this.uneCase;
+			return (String)this.contenu;
 		}
 	}
 	
