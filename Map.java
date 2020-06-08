@@ -1,6 +1,7 @@
-import java.util.*;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-public class Map {
+public class Map implements Serializable {
 	ArrayList<PersonnageNonJoueur> listePNJ = new ArrayList<PersonnageNonJoueur>();
 	
 	ArrayList<PersonnageJoueur> listePersonnage = new ArrayList<PersonnageJoueur>();

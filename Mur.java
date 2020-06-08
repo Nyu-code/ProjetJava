@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Mur {
+public class Mur implements Serializable {
 	public String unMur;
 	
 	public Mur() {

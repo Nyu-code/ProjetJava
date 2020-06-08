@@ -1,6 +1,8 @@
-import java.util.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-public class Item {
+public class Item implements Serializable {
 	public String categorie;			//potion ou arme ou protection
 	public int[] bouclier_arme={10,10};
 	public int[] bouclier_defense= {10,10,10};
@@ -18,7 +20,7 @@ public class Item {
 			);
 	
 	public Item() {
-		this.categorie = "";
+		this.categorie = "vide";
 	}
 	
 	public Item(String item) {

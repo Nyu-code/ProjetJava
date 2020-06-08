@@ -1,9 +1,9 @@
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class PersonnageJoueur extends Personnage{
+public class PersonnageJoueur extends Personnage implements Serializable{
 	private String pseudo;
 	private static final String type="joueur";
 	private int pointAction = 6;

@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Case {
+public class Case implements Serializable {
 	public int col;
 	public int ligne;
 	public Object contenu;

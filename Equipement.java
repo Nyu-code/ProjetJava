@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Equipement extends Item{
+public class Equipement extends Item implements Serializable {
 	private String nom;
 	private String categorie;
 	public Equipement() {
