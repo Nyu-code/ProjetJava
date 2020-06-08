@@ -361,9 +361,8 @@ public class Map implements Serializable {
 	}
 	
 	public void addPNJ(PersonnageNonJoueur p, int posh, int posv) {
-		Case c = new Case(p,posh,posv);
-		p.setCaseP(c);
-		this.map[posh][posv] = c;
+		p.setCaseP(new Case(p,posh,posv));
+		this.map[posh][posv] = p.getCaseP();
 		this.listePNJ.add(p);
 	}
 	
