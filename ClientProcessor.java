@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -34,7 +35,8 @@ public class ClientProcessor extends JFrame implements Runnable{
 	private static ArrayList<PersonnageJoueur> Liste_Joueurs = new ArrayList<PersonnageJoueur>();
 	private int nbJoueurs = 0;
 	private static ArrayList<byte[]> Nom_Joueurs = new ArrayList<byte[]>();
-	private Map m;
+	private Map map;
+	private Menu menu;
 
 	public ClientProcessor(Socket Sock){
       socket = Sock;
@@ -66,13 +68,10 @@ public class ClientProcessor extends JFrame implements Runnable{
             switch(réponse){
             
                case "0":
-            	  toSend = "Bienvenue dans le monde EHLPTMMMORPGSVR !";
-            	  start_game();
-                  break;
-                  
+            	  start_game(out, in);
                case "1":
-                  toSend = "La partie se charge";
-          		  charger();
+//                  toSend = "La partie se charge";
+//          		  charger();
                   break;
                   
                case "2":
@@ -110,26 +109,6 @@ public class ClientProcessor extends JFrame implements Runnable{
          }
       }
    }
-   
-   public void start_game() {
-	    MenuCreation m2 = new MenuCreation();
-        while (!m2.getConfirmation()) {
-            System.out.println("");;
-        }
-        int[] stat2 = m2.getStats();
-        String pseudo2 = m2.getPseudo();
-        
-        PersonnageJoueur p2 = new PersonnageJoueur(pseudo2,stat2[0],stat2[1],stat2[2],30,m2.degres,1,1);
-        System.out.println(p2);
-        
-        String stats = p2.afficheStats();
-        System.out.println(stats);
-        p2.afficheInventaire();
-        Map m = new Map(p2,57,43,6,6);
-        new Menu(p2, m);
-        System.out.println(m);
-   }
-   
 	public void combat(PersonnageJoueur p1, PersonnageNonJoueur pnj) {
 		//Tant que le joueur est en combat la boucle tourne
 		verifTour(p1, pnj);
@@ -160,6 +139,104 @@ public class ClientProcessor extends JFrame implements Runnable{
 			p1.setTon_tour(true); // au tour du joueur
 		}
 	}
+		
+}
+	public void start_game(DataOutputStream out, DataInputStream in) throws IOException {
+		
+		Map m = new Map();
+		this.map = m;
+        PersonnageJoueur p = map.listePersonnage.get(0);
+    String msg = map.toString();
+    String Personnage ="\n" + p.toString()+"\n"+ p.afficheStats() + "\n" + p.afficheInventaire(); //On envoit toutes les informations au client
+    String menuJoueur = "\n Vous pouvez : "+
+    "\n 1 - vous déplacer (2PA)" +
+    "\n 2 - attaquer (3PA)" +
+    "\n 3 - utiliser un objet (variable)" +
+    "\n 4 - Ramasser/déposer un objet (2PA)" +
+    "\n 5 - finir et garder les PA restants"+
+    "\n Votre choix :";
+    msg += Personnage;
+    msg += menuJoueur;
+    out.writeUTF(msg);
+    out.flush();
+    boolean in_game = true;
+    while (in_game) {
+        int rep_client = in.readInt();
+        switch(rep_client) {
+        // les cas où on se déplace
+        case 11 :
+        	map.deplacer(p, 1);
+        	msg = map.toString();
+        	msg += Personnage;
+        	msg += menuJoueur;
+        	out.writeUTF(msg);
+        	out.flush();
+        case 12 :
+        	map.deplacer(p, 2);
+        	msg = map.toString();
+        	msg += Personnage;
+        	msg += menuJoueur;
+        	out.writeUTF(msg);
+        	out.flush();
+        case 13 :
+        	map.deplacer(p, 3);
+        	msg = map.toString();
+        	msg += Personnage;
+        	msg += menuJoueur;
+        	out.writeUTF(msg);
+        	out.flush();
+        case 14 :
+        	map.deplacer(p, 4);
+        	msg = map.toString();
+        	msg += Personnage;
+        	msg += menuJoueur;
+        	out.writeUTF(msg);
+        	out.flush();
+        	//Cas pour attaquer
+        case 2 :
+  		  ArrayList<Case> Liste_autour = map.autour(p);
+  		  for(int i = 0; i< Liste_autour.size() ; i++) {
+  			  if (Liste_autour.get(i).uneCase instanceof PersonnageNonJoueur) {
+  				  pnj = (PersonnageNonJoueur) Liste_autour.get(i).uneCase;
+          		  combat(p,pnj);
+          	    Personnage ="\n" + p.toString()+"\n"+ p.afficheStats() + "\n" + p.afficheInventaire(); //On envoit toutes les informations au client
+              	msg = map.toString();
+            	msg += Personnage;
+            	msg += menuJoueur;
+            	out.writeUTF(msg);
+            	out.flush(); 
+  			  }
+  			  else {
+
+  	        	msg = map.toString();
+  	        	msg += "\n Il n'y a aucun monstre autour de vous !";
+  	        	msg += Personnage;
+  	        	msg += menuJoueur;
+  	        	out.writeUTF(msg);
+  	        	out.flush();
+  			  }
+  		  }
+        case 3 :
+        		out.writeUTF("Choisissez l'item à utiliser : (mettre le chiffre) qui est dans votre inventaire sur l'item désirer");
+        		out.flush();
+        		rep_client = in.readInt();
+        		Item item_joueur = p.getInventaire().get(rep_client-1);
+        		p.utiliserObjet(item_joueur,rep_client-1);
+        		
+        	    Personnage ="\n" + p.toString()+"\n"+ p.afficheStats() + "\n" + p.afficheInventaire(); //On envoit toutes les informations au client
+
+	        	msg = map.toString();
+	        	msg += "\n L'item : "+ item_joueur + " à été utiliser.";
+	        	
+	        	msg += Personnage;
+	        	msg += menuJoueur;
+	        	out.writeUTF(msg);
+	        	out.flush();
+        case 4 : 
+        }
+    }
+    
+    
 }
 	public void verifTour(PersonnageJoueur p1, PersonnageNonJoueur pnj) { //permet de vérifier qui commence au début du tour
 		if (p1.getInit() > pnj.getInit()) { //Si l'initiative du joueur > init du pnj alrs p1 joue avant pnj
@@ -213,36 +290,53 @@ public class ClientProcessor extends JFrame implements Runnable{
             e.printStackTrace();
         }
     }
-   public void charger() {
-		JFileChooser select = new JFileChooser("C:\\Users\\Jacqu\\eclipse-workspace\\EHLPTMMMORPGSVR\\Sauvegardes"); // à déterminer l'endroit où sera les parties sauvegarder
-		select.addChoosableFileFilter(new FiltreExtensionFichier()); //On filtre le fichier selectionner par des .ser uniquement
-		int res = select.showDialog(this , "Charger");
-		String namefile = "";
-		//On vérifie la commande envoyé par le joueur
-		if (res == JFileChooser.APPROVE_OPTION) {
-			File f	= select.getSelectedFile();
+   @SuppressWarnings("unchecked")
+   
+   public PersonnageJoueur charger() {
+			File f	= new File("Liste_Joueurs.ser");
+			File fnom = new File("Nom_Joueurs.ser");
 			System.out.println("Nom du fichier selectionné : " + f.getName());
-			namefile = f.getName();
-		}
-		//On stop tout si le joueur ne souhaite plus charger;
-		else {
-			System.out.println("Chargement de partie annulé");
-			return;
-		}//On désérialise le fichier et on les mets dans chaque object pour relancer la partie avec ces données
-		try(FileInputStream fis = new FileInputStream(namefile);
+			if(!f.exists()) {
+				try {
+					f.createNewFile();
+					
+				}catch(IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (!fnom.exists()) {
+				try {
+					fnom.createNewFile();
+				}catch(IOException e) {
+					e.printStackTrace();
+				}
+			}
+			//On désérialise le fichier et on les mets dans chaque object pour relancer la partie avec ces données
+		try(FileInputStream fis = new FileInputStream(f);
 				ObjectInputStream ois = new ObjectInputStream(fis)){
+			FileInputStream fis_2 = new FileInputStream(fnom);
+			ObjectInputStream ois_2 = new ObjectInputStream(fis_2);
+			
+			
 //			for (int i = 0; i<Liste_Joueurs.size();i++) {
 //				PersonnageJoueur p1 = (PersonnageJoueur) ois.readObject();
 //				Liste_Joueurs.set(i,p1);
 //			}
 			Liste_Joueurs = (ArrayList<PersonnageJoueur>) ois.readObject();
+			Nom_Joueurs = (ArrayList<byte[]>) ois_2.readObject();
 			String choix = "";
+			
 			for(int i = 0; i<Liste_Joueurs.size(); i++) {
-				choix += i+1+ " : " + Liste_Joueurs.get(i).getPseudo()+"\n";
+				PersonnageJoueur p = Liste_Joueurs.get(i);
+				String pseudo = new String(Nom_Joueurs.get(i));
+				p.setPseudo(pseudo);
+				choix += i+1+ " : " + p.getPseudo() +"\n";
 			}
 			out.writeUTF(choix);
 			int choix_joueurs = in.readInt();
 			PersonnageJoueur p = Liste_Joueurs.get(choix_joueurs - 1);
+			return p;
+			
 			
 					
 		} catch (FileNotFoundException e) {
@@ -252,7 +346,7 @@ public class ClientProcessor extends JFrame implements Runnable{
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+		return null;
    }
    
    public boolean verifMort(PersonnageJoueur p1) {

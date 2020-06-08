@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -18,6 +20,8 @@ public class Client extends JFrame implements Runnable{
    private static int count = 0;
    private String name = "Utilisateur-";   
    private boolean start = false;
+   private Menu menu;
+   
    public Client(String host, int port){
       name += ++count;
       try {
@@ -36,9 +40,8 @@ public class Client extends JFrame implements Runnable{
             DataOutputStream out = new DataOutputStream(client.getOutputStream());
             DataInputStream in = new DataInputStream(client.getInputStream());
             //On envoie la commande au serveur
-            if (!start) {
+
             String commande = getCommand();
-            System.out.println(commande);
             out.writeUTF(commande);
             out.flush();
             
@@ -54,14 +57,15 @@ public class Client extends JFrame implements Runnable{
             }
             //On informe au client que la commande à bien été envoyé
             System.out.println("Commande " + commande + " envoyée au serveur");
-            start = true;
-            }
             
             //On attend la réponse
-            String réponse = read();
-            System.out.println("\t * " + name + " : Réponse reçue \n" + réponse);
+            if (commande == "Nouvelle partie") {
+                commencer(out, in);
+                client.close();
+            }
+            
 //          
-           
+            
          } catch (IOException e1) {
             e1.printStackTrace();
          }
@@ -71,13 +75,6 @@ public class Client extends JFrame implements Runnable{
          } catch (InterruptedException e) {
             e.printStackTrace();
          }
-         try {
-			out.writeUTF("CLOSE");
-	        out.flush();
-	        out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
       }
 
    private String getCommand(){
@@ -113,7 +110,89 @@ public class Client extends JFrame implements Runnable{
 	   }
       return réponse;
    }
+   public void commencer(DataOutputStream out, DataInputStream in) {
+	   try {
+		Scanner sc = new Scanner(System.in);
+		boolean in_game = true;
+		while (in_game) {
+			String rep_serv = in.readUTF();
+			System.out.println(rep_serv);
+			int rep_client = sc.nextInt();
+			if (rep_client == 5) {
+				in_game = false;
+				out.writeInt(rep_client);
+				out.flush();
+			}
+			else if (rep_client == 1) {
+				int q = deplacer();
+				rep_client = q;
+				out.writeInt(rep_client);
+				out.flush();
+			}
+			else if (rep_client == 2) {
+				out.writeInt(rep_client);
+				out.flush();
+			}
+			else if (rep_client == 3) {
+				out.writeInt(rep_client);
+				out.flush();
+				rep_serv = in.readUTF();
+				System.out.println(rep_serv);
+				Scanner sc_utiliserItem = new Scanner(System.in);
+				rep_client = sc_utiliserItem.nextInt();
+				sc_utiliserItem.close();
+				out.writeInt(rep_client);
+				out.flush();
+			}
+		}
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+}
+   public int utiliserObjet() {
+	   Scanner sc = new Scanner(System.in);
+       System.out.println("Choisissez l'item à utiliser : (mettre le chiffre) qui est dans votre inventaire sur l'item désirer");
+       boolean choix = false;
+       //premiere verification
+       while (!choix) {
+           try {
 
+               int input = sc.nextInt();
+               if (input < 17 && input > 0) {
+                   choix = true;
+               } else {
+                   System.out.println("La saisie n'est pas correcte.");
+               }
+               return input;
+           } catch (InputMismatchException e) {
+               System.out.println("Vous n'avez bien saisie un chiffre, recommencez.");
+           }
+       }
+	return 0;
+   }
+   public int deplacer() {
+
+       //premiere verification
+       Scanner sc = new Scanner(System.in);
+       System.out.println("Choisissez votre déplacement : gauche(11) , haut (12), droite (13), bas (14)");
+       boolean choix = false;
+       //premiere verification
+       while (!choix) {
+           try {
+
+               int input = sc.nextInt();
+               if (input < 15 && input > 10) {
+                   choix = true;
+               } else {
+                   System.out.println("La saisie n'est pas correcte.");
+               }
+               return input;
+           } catch (InputMismatchException e) {
+               System.out.println("Vous n'avez bien saisie un chiffre, recommencez.");
+           }
+       }
+	return 0;
+   }
 //Méthode pour lire les réponses du serveur
    private String read() throws IOException{
 	   DataInputStream in = new DataInputStream(client.getInputStream());

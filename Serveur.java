@@ -6,7 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Serveur {
+public class Serveur{
 
    //On initialise des valeurs par défaut
    private int port = 1906;
@@ -29,7 +29,7 @@ public class Serveur {
       host = pHost;
       port = pPort;
       try {
-         server = new ServerSocket(port, 100, InetAddress.getByName(host));
+         server = new ServerSocket(port, 9, InetAddress.getByName(host));
          
       } catch (UnknownHostException e) {
          e.printStackTrace();
@@ -78,5 +78,14 @@ public class Serveur {
    
    public void close(){
       isRunning = false;
-   }   
+   }
+	public static void main(String[] args) {
+		   String host = "127.0.0.1";
+		   int port = 1906;
+		   
+		   Serveur s = new Serveur(host,port);
+		   s.open();
+		   
+		  System.out.println("Serveur initialisé.");
+	}
 }
